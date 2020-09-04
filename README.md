@@ -1,5 +1,4 @@
 # MayContainGame
-
 Feito por:
 * Cinthia Mie Nagahama Ungefehr
 * Fabio Henrique Ayres Lapa
@@ -7,8 +6,14 @@ Feito por:
 ----------------------------------------
 Projeto final da disciplina de EDA
 
-~~Detalhes serão adicionados no futuro~~
-
 ## Objetivos:
 
-- [X] Something
+- [ ] História (textual)
+- [ ] Passagem de tempo (4 partes)
+- [ ] Cartas (3 tipos de Ataque | 2 tipos de Defesa)
+- [ ] Inimigos (3 tipos de inimigos)
+- [ ] Começo e Fluxo de Batalha
+
+- [ ] \(Opicional) Arte dos inimigos ASCII
+- [ ] \(Opicional) Texto colorido
+- [ ] \(Opicional) Mais inimigos
