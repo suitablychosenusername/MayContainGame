@@ -10,7 +10,7 @@ Projeto final da disciplina de EDA
 
 - [ ] História (textual)
 - [ ] Passagem de tempo (4 partes)
-- [ ] Cartas (3 tipos de Ataque | 2 tipos de Defesa)
+- [ ] Cartas (3 de Ataque | 1 de Defesa | 1 de Cura)
 - [ ] Inimigos (3 tipos de inimigos)
 - [ ] Começo e Fluxo de Batalha
 
