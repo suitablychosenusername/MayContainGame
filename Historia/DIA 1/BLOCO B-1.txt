@@ -1,0 +1,9 @@
+ [se 1:] você pega o papel e vai até o hotel encontrar com o Sir Fulano, saindo da vila em seguida. Sir Fulano
+ em sua majestosa carruagem que com certeza não atrai ladrões e você em um alazão bonito e cheio de brilhantes
+ (inclusive, o cavalo em si é brilhante) emprestado por Sir Fulano, que alega que o cavalo é o mais rápido
+ dessa região (mas não se preocupe, você não vai precisar da velocidade dele).
+  [Sir Fulano é muito boçal e vive em seu proprio mundo e vive tagarelando de coisas superficiais]
+  [inicio do dia será igual, dialogos do Sir Fulano vão servir para a contagem de encontros]
+  [Sir Fulano, apesar de parecer, não é totalmente inútil. Ele sabe lutar... sort of...]
+  [danos fracos, critical = 2]
+ 

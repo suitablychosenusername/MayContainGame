@@ -1,0 +1,129 @@
+"A Incrível Jornada de um Mago Qualquer Viciado em Jogos de Azar!"
+
+Mapa (se tiver interface){
+    numero min encounter: 2;
+    numero max encounter: 3-5;
+    Numero dias: 4;
+}
+
+Enemy {
+    penguin {MUST HAVE I WANT MY PENGUIN OMG he must be purple
+        ID
+        HP
+        ATK
+        DEF
+        DElemento;
+        Comportamento{
+            friendly;
+        }
+    }
+
+    minotaur {
+        ID
+        HP
+        ATK
+        DEF
+        RElemento {
+            Fogo = 0.75x 
+            Choque = 1x
+            Gelo = 1.50x
+        }
+        Comportamento{
+            só ataca Mago;
+        }
+    }
+
+    goblin {
+        ID
+        HP;
+        ATK;
+        DEF;
+        Elemento;
+        Comportamento{
+            ataca aleatorio;
+        }
+    }
+
+    ladrao { MUST HAVE
+        ID
+        HP = 200?
+        ATK = 
+        DEF =
+        RElemento{
+            Fogo = 1.5
+            Choque = 1.25
+            Gelo = 1.25
+        }
+        Comportamento{
+            roubam items;
+            2-4 turnos antes de fugir (depende do hp);
+        }
+    }
+
+    boss { MUST HAVE
+        ID
+        HP
+        ATK
+        DEF
+        DElemento
+        Comportamento {
+            ataca aleatorio
+        }
+    }
+}
+
+Card/Battle {
+    Elementocartas {
+        Fogo;
+        Gelo;
+        Trovão;
+        Recuperação;
+        Escudo;
+    }
+    Cartas {
+        ID;
+        Elemento;
+        Multiplicador;
+    }
+    Deck {
+
+    }
+    Mao {
+
+    }
+    Stats do char{
+        HP
+        ATK
+        DEF
+    }
+    Fluxo batalha {
+        Calculo dano {
+            Magia = ATK * (MultiplicadorCarta + ProficienciaMagia) * RElemAlvo;
+
+        }
+    }
+}
+
+História {
+    Tempo {
+        cor de fundo altera com a passagem do tempo
+    }
+    Tempo = mapa;
+    Ordem história:
+    Quest 1: Escoltar;
+    Quest 2: Transporte;
+    Quest 3: Caçar Monstro;
+    1
+    1 -> 2
+    1 -> 3
+    2
+    2 -> 3
+    3
+    6 possibilidades
+
+    Fim:
+    Chega na guilda pra entregar quest:
+    escutar rumores sobre:
+    alguém morrendo no caminho;
+    monstro destruindo vila proxima;
+}

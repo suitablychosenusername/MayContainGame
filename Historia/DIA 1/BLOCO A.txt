@@ -1,0 +1,38 @@
+    Era manhã na pequena taverna de Cynder - famosa na região por atrair caçadores de recompensa - e um mago
+tomava seu café da manhã em paz, enquanto avaliava trabalhos que poderia fazer no caminho para Idlebridge
+- digo, Idebrigge. No mural haviam três panfletos (sim, daqueles destacáveis com o número de telefone. 
+Essa vila já era demasiadamente moderna):
+                                      ,------------------------,
+                                      | TRABALHOS PARA SEMANA: |
+                                      '------------------------'
+                ,---------------------, ,---------------------, ,---------------------,
+                |          1          | |          2          | |          3          |
+                |  Escoltar alguém e  | |  Levar algo e talz  | |  Matar algo e talz  |
+                |        talz         | |                     | |                     |
+                |                     | |                     | |                     |
+                | Escoltar Sir Fulano | | Caso aceite,procure | | Socorro!!!!!!!!!!!! |
+                | até os estábulos de | | pelo mestre da      | | Mate o monstro!!!!! |
+                | Idebrigge.          | | filial da guilda    | | Ele está no caminho |
+                | Caso aceite, chamar | | da vila para        | | para Idebrigge.     |
+                | por Sir Fulano no   | | receber mais        | |                     |
+                | Hotel.              | | detalhes.           | |         - Moradores |
+                | ------------------- | | ------------------- | | ------------------- |
+                |          Recompensa | |          Recompensa | |          Recompensa |
+                |                100G | |                200G | |                300G |
+                '---------------------' '---------------------' '---------------------'
+    Você gostaria de fazer algum dos trabalhos:
+    ,--------------,
+    |    Sim       |
+    |    Não       |
+    | -> Tanto faz |
+    '--------------'
+
+    [se não:] "Ok, thanks, bye" * fecha jogo *
+    [se tanto faz:] "Você não tem escolha: você TEM que escolher"
+    [se sim:] "Qual você quer fazer?"
+    [int 1, 2 ou 3.]
+    [se 1:] você pega o papel e vai até o hotel encontrar com o Sir Fulano
+    [se 2:] você pega o papel e fala com o balconista Ella e pergunta como entrar em contato com o mestre da filial
+          da guilda (ela te faz pular o balcao e você faz um teste de acrobacia)[se > 40 você falha e cai e ela
+          abre a portinha do balcao para voce passar]
+    [se 3:] você só sai

@@ -1,0 +1,9 @@
+[se 2:] você pega o papel e fala com o balconista Ella e pergunta como entrar em contato com o mestre da filial
+        da guilda (ela te faz pular o balcao e você faz um teste de acrobacia)[se > 40 você falha e cai e ela
+        abre a portinha do balcao para voce passar]
+[Evento do bloco A]
+Você fala com o mestre da guilda e ele diz: "carambath! Vocêth nãoth veioth sóth peloth dinheiroth!"
+[recompensa aumentada para 500G!! 500G, dude!! Porque havera um festival em Idebrigge]
+[item é algo muito importante para o festival]
+Você pega o item e vai.
+[4 narrações ocorrem no decorrer do dia]
