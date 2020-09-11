@@ -1,0 +1,77 @@
+MayContainGame: Protótipos - TADs
+
+---------------------------------- Struct ---------------------------------
+
+struct Behaviour: -> Descrição do comportamento
+	behaviour
+
+struct Cards:
+	idCarta
+	nomeCarta
+	elementoCarta
+	multiplicadorCarta
+	efeitoCarta -> Ataque/Defesa/whatever
+	descricaoCarta
+
+struct Deck: // Fila
+	primeiraCarta
+	finalCarta
+	quantidadeCartas
+	Cards
+
+struct Hand: // Lista Estática
+	quantidadeCartas
+	Cards
+
+struct Status:
+	hp
+	ataque
+	defesa
+	resistenciaElemental
+
+---------------------------------- Headers ---------------------------------
+
+Allie: -> Quest 1
+	struct Status
+
+Battle_Flow:
+	Enemies
+	Deck
+	Mage
+	calculate_damage()
+	behaviour_type(Enemies.getBehaviour())
+
+Boss:
+	struct Status
+
+Enemies:
+	struct Status 
+	struct Behaviour
+
+Deck: 
+	struct Deck
+	struct Hand
+	shuffle()
+	push()
+	pop()
+	
+Game:
+	loading() -> Tela de loading
+	intro() -> Começo da história ("Bloco0")
+	start_game() -> Começa o jogo
+	end_game() -> Fim de jogo (Morte ou Chegar em Idebrigg)
+Mage: 
+	struct Status
+	struct Deck
+	Allie/Object/NONE -> Depende da quest
+
+Quest:
+	tipoQuest
+
+Object:
+	Status -> Atack/Defesa = NONE
+	struct Behaviour	
+
+Screen:
+	print_screen() -> Printa um arquivo na tela
+	clean_screen() -> Limpa a tela
