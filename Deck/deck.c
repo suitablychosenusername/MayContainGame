@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <locale.h>
 #include "deck.h"
 
 // TODO:
@@ -22,8 +23,8 @@
 
 struct deck {
     int inicio, final, qtd;
-    int info[30]; // armazena somente os IDs das cartas no deck para poupar memoria [METODO INT]
-    // Carta info[30]; // armazena todas as informacoes da carta no deck [METODO CARTA]
+    int info[30]; // armazena somente os IDs das cartas no deck para poupar memoria [METODO INT] (acho melhor)
+    // Carta info[30]; // armazena todas as informações da carta no deck [METODO CARTA]
 }; // estrutura da fila (Deck)
 
 struct mao {
@@ -32,10 +33,10 @@ struct mao {
 }; // estrutura da lista (Mao)
 
 void cria_db_carta(){
-    // aloca a memoria para o array:
+    // aloca a memória para o array:
     carta_db = (DatabaseCarta*) malloc(sizeof(DatabaseCarta) * 16);
 
-    // registra as informacoes das cartas no mesmo:
+    // registra as informações das cartas no mesmo:
 
     // Cartas de Cura
 
@@ -44,25 +45,25 @@ void cria_db_carta(){
     strcpy(carta_db[0].carta_info.elemento_carta, "Cura");
     carta_db[0].carta_info.multiplicador_carta = 2;
     strcpy(carta_db[0].carta_info.efeito, "Cura");
-    strcpy(carta_db[0].carta_info.descricao, "Nivel 1. Regenera seu HP muito pouco. Agora voce entende quando dizem \"melhor prevenir do que remediar\", nao e?");
+    strcpy(carta_db[0].carta_info.descricao, "Nível 1. Regenera seu HP muito pouco. Agora voce entende quando dizem \"melhor prevenir do que remediar\", não é?");
     carta_db[0].qtdefault = 4;
     carta_db[0].qtleft = 4;
 
     carta_db[1].carta_info.ID_carta = 1;
-    strcpy(carta_db[1].carta_info.nome_carta, "Bencao Divina");
+    strcpy(carta_db[1].carta_info.nome_carta, "Benção Divina");
     strcpy(carta_db[1].carta_info.elemento_carta, "Cura");
     carta_db[1].carta_info.multiplicador_carta = 5;
     strcpy(carta_db[1].carta_info.efeito, "Cura");
-    strcpy(carta_db[1].carta_info.descricao, "Nivel 2. Regenera seu HP. Mas nao tem nada de divino aqui. Devo lembra-lo de que voce e um clerigo?");
+    strcpy(carta_db[1].carta_info.descricao, "Nível 2. Regenera seu HP. Mas não tem nada de divino aqui. Devo lembró-lo de que você é um mago e não um clérigo?");
     carta_db[1].qtdefault = 2;
     carta_db[1].qtleft = 2;
 
     carta_db[2].carta_info.ID_carta = 2;
-    strcpy(carta_db[2].carta_info.nome_carta, "Relaxa, to Full Life");
+    strcpy(carta_db[2].carta_info.nome_carta, "Relaxa, Tô Full Life");
     strcpy(carta_db[2].carta_info.elemento_carta, "Cura");
     carta_db[2].carta_info.multiplicador_carta = 999;
     strcpy(carta_db[2].carta_info.efeito, "Cura");
-    strcpy(carta_db[2].carta_info.descricao, "Nivel 3. Cura completamente. So pode ser usada uma vez por dia! Nada melhor do que um dia apos o outro, nao e mesmo?");
+    strcpy(carta_db[2].carta_info.descricao, "Nível 3. Cura completamente. Só pode ser usada uma vez por dia! Nada melhor do que um dia após o outro, não é mesmo?");
     carta_db[2].qtdefault = 1;
     carta_db[2].qtleft = 1;
 
@@ -73,7 +74,7 @@ void cria_db_carta(){
     strcpy(carta_db[3].carta_info.elemento_carta, "Fogo");
     carta_db[3].carta_info.multiplicador_carta = 1.15;
     strcpy(carta_db[3].carta_info.efeito, "Ataque");
-    strcpy(carta_db[3].carta_info.descricao, "Nivel 1. Serio que voce precisa de uma explicacao pra uma magia com esse nome? Conjura uma labareda. Uau.");
+    strcpy(carta_db[3].carta_info.descricao, "Nível 1. Sério que voce precisa de uma explicação pra uma magia com esse nome? Conjura uma labareda. Uau.");
     carta_db[3].qtdefault = 3;
     carta_db[3].qtleft = 3;
 
@@ -82,27 +83,27 @@ void cria_db_carta(){
     strcpy(carta_db[4].carta_info.elemento_carta, "Fogo");
     carta_db[4].carta_info.multiplicador_carta = 1.30;
     strcpy(carta_db[4].carta_info.efeito, "Ataque");
-    strcpy(carta_db[4].carta_info.descricao, "Nivel 2. Conjura um redemoinho de fogo que prende o alvo. Isso que e um abraco caloroso!");
+    strcpy(carta_db[4].carta_info.descricao, "Nível 2. Conjura um redemoinho de fogo que prende o alvo. Isso que é um abraço caloroso!");
     carta_db[4].qtdefault = 2;
     carta_db[4].qtleft = 2;
 
     carta_db[5].carta_info.ID_carta = 5;
-    strcpy(carta_db[5].carta_info.nome_carta, "Presente dos Ceus");
+    strcpy(carta_db[5].carta_info.nome_carta, "Presente dos Céus");
     strcpy(carta_db[5].carta_info.elemento_carta, "Fogo");
     carta_db[5].carta_info.multiplicador_carta = 2;
     strcpy(carta_db[5].carta_info.efeito, "Ataque");
-    strcpy(carta_db[5].carta_info.descricao, "Nivel 3. Conjura um meteoro acima da cabeca do alvo. Uuh, fogos de artificio!");
+    strcpy(carta_db[5].carta_info.descricao, "Nível 3. Conjura um meteoro acima da cabeça do alvo. Indicado para amaciar cabeças-duras!");
     carta_db[5].qtdefault = 1;
     carta_db[5].qtleft = 1;
 
     // Cartas de Gelo
 
     carta_db[6].carta_info.ID_carta = 6;
-    strcpy(carta_db[6].carta_info.nome_carta, "Fica Frio Ai");
+    strcpy(carta_db[6].carta_info.nome_carta, "Fica Frio Aí");
     strcpy(carta_db[6].carta_info.elemento_carta, "Gelo");
     carta_db[6].carta_info.multiplicador_carta = 1.15;
     strcpy(carta_db[6].carta_info.efeito, "Ataque");
-    strcpy(carta_db[6].carta_info.descricao, "Nivel 1. Conjura um campo magico de baixa temperatura em volta do alvo, congelando toda a umidade do ar dentro dele.");
+    strcpy(carta_db[6].carta_info.descricao, "Nível 1. Conjura um campo mágico de baixa temperatura em volta do alvo, capaz de congelar toda a umidade do ar dentro dele.");
     carta_db[6].qtdefault = 3;
     carta_db[6].qtleft = 3;
 
@@ -111,7 +112,7 @@ void cria_db_carta(){
     strcpy(carta_db[7].carta_info.elemento_carta, "Gelo");
     carta_db[7].carta_info.multiplicador_carta = 1.30;
     strcpy(carta_db[7].carta_info.efeito, "Ataque");
-    strcpy(carta_db[7].carta_info.descricao, "Nivel 2. Conjura uma rajada de gelo contra o alvo. Mas nao deixe o nome de enganar, e so um raio frio.");
+    strcpy(carta_db[7].carta_info.descricao, "Nível 2. Conjura uma rajada de gelo contra o alvo. Congelamento vendido separadamente.");
     carta_db[7].qtdefault = 2;
     carta_db[7].qtleft = 2;
 
@@ -131,7 +132,7 @@ void cria_db_carta(){
     strcpy(carta_db[9].carta_info.elemento_carta, "Elec");
     carta_db[9].carta_info.multiplicador_carta = 1.15;
     strcpy(carta_db[9].carta_info.efeito, "Ataque");
-    strcpy(carta_db[9].carta_info.descricao, "Nivel 1. Tao potente quanto uma enfiar o dedo na tomada.");
+    strcpy(carta_db[9].carta_info.descricao, "Nível 1. Tão potente quanto enfiar o dedo na tomada.");
     carta_db[9].qtdefault = 3;
     carta_db[9].qtleft = 3;
 
@@ -140,27 +141,27 @@ void cria_db_carta(){
     strcpy(carta_db[10].carta_info.elemento_carta, "Elec");
     carta_db[10].carta_info.multiplicador_carta = 1.30;
     strcpy(carta_db[10].carta_info.efeito, "Ataque");
-    strcpy(carta_db[10].carta_info.descricao, "Nivel 2. Conjura um relampago diretamente sob o alvo. Alguem pediu por churrasco?");
+    strcpy(carta_db[10].carta_info.descricao, "Nível 2. Conjura um relâmpago diretamente sob o alvo. Churrasco instantâneo!");
     carta_db[10].qtdefault = 2;
     carta_db[10].qtleft = 2;
 
     carta_db[11].carta_info.ID_carta = 11;
-    strcpy(carta_db[11].carta_info.nome_carta, "Furia dos Ceus");
+    strcpy(carta_db[11].carta_info.nome_carta, "Fúria dos Céus");
     strcpy(carta_db[11].carta_info.elemento_carta, "Elec");
     carta_db[11].carta_info.multiplicador_carta = 2;
     strcpy(carta_db[11].carta_info.efeito, "Ataque");
-    strcpy(carta_db[11].carta_info.descricao, "Nivel 3. Conjura uma tempestade de relampagos diretamente sob o alvo. Parece que Zeus esta de mau humor!");
+    strcpy(carta_db[11].carta_info.descricao, "Nível 3. Conjura uma tempestade de relâmpagos diretamente sob o alvo. Espero que não tenha medo de trovões!");
     carta_db[11].qtdefault = 1;
     carta_db[11].qtleft = 1;
 
     // Cartas de Suporte
 
     carta_db[12].carta_info.ID_carta = 12;
-    strcpy(carta_db[12].carta_info.nome_carta, "Escudo Magico");
+    strcpy(carta_db[12].carta_info.nome_carta, "Escudo Mágico");
     strcpy(carta_db[12].carta_info.elemento_carta, "Supp");
     carta_db[12].carta_info.multiplicador_carta = 0;
     strcpy(carta_db[12].carta_info.efeito, "Escudo");
-    strcpy(carta_db[12].carta_info.descricao, "Conjura um escudo que te protege por 2 turnos. Bem util.");
+    strcpy(carta_db[12].carta_info.descricao, "Conjura um escudo que te protege por 2 turnos. Bem útil.");
     carta_db[12].qtdefault = 2;
     carta_db[12].qtleft = 2;
 
@@ -169,7 +170,7 @@ void cria_db_carta(){
     strcpy(carta_db[13].carta_info.elemento_carta, "Supp");
     carta_db[13].carta_info.multiplicador_carta = 0;
     strcpy(carta_db[13].carta_info.efeito, "Saque");
-    strcpy(carta_db[13].carta_info.descricao, "Lhe permite sacar até duas cartas. O que? Cartola? Nao, nao, nao, voce e um mago, nao um magico!");
+    strcpy(carta_db[13].carta_info.descricao, "Lhe permite sacar até duas cartas. O quê? Cartola? Não, eu acho que você está equivocado.");
     carta_db[13].qtdefault = 2;
     carta_db[13].qtleft = 2;
 
@@ -182,8 +183,8 @@ void cria_db_carta(){
     carta_db[14].qtdefault = 1;
     carta_db[14].qtleft = 1;
 
-    // Espaco vazio [Carta nula precisa ter o maior ID pois a
-    // organizacao das cartas da mao e feita em ordem crescente]
+    // Espaço vazio [Carta nula precisa ter o maior ID pois a
+    // organização das cartas da mao é feita em ordem crescente de IDs]
 
     carta_db[15].carta_info.ID_carta = 15;
     strcpy(carta_db[15].carta_info.nome_carta, "----------");
@@ -200,9 +201,9 @@ void libera_db_carta(){
 }
 
 Deck* cria_deck(){
-    // aloca memoria para a fila
+    // aloca memória para a fila
     Deck* fi = (Deck*) malloc (sizeof(Deck));
-    if (fi == NULL){ // codigo de erro para falha na alocacao
+    if (fi == NULL){ // código de erro para falha na alocação
         printf("ERRO MEMDECK: low memo\n");
         system("pause");
         exit(1);
@@ -233,10 +234,10 @@ int deck_vazio(Deck* fi){
 int insere_deck(Deck* fi, int idcarta){
     if (fi == NULL)
         return -1;
-    if (fi->qtd == 30) // se deck cheio, nao realiza operacao
+    if (fi->qtd == 30) // se deck cheio, não realiza operação
         return 0;
-    // fi->info[fi->final] = carta_db[cartaid].carta_info; // puxa info da carta do array DB [METODO CARTA]
-    fi->info[fi->final] = idcarta; // armazena ID da carta para consulta no array DB [METODO INT]
+    // fi->info[fi->final] = carta_db[cartaid].carta_info; // puxa info da carta do array DB [MÉTODO CARTA]
+    fi->info[fi->final] = idcarta; // armazena ID da carta para consulta no array DB [MÉTODO INT]
     fi->final = (fi->final + 1) % 30; // incrementa o contador final dentro do modulo
     fi->qtd++; // incrementa o contador quantidade
     return 1;
@@ -245,9 +246,9 @@ int insere_deck(Deck* fi, int idcarta){
 int remove_deck(Deck* fi){
     if (fi == NULL)
         return -1;
-    if (fi->qtd == 0) // se deck vazio, entao impossivel
+    if (fi->qtd == 0) // se deck vazio, então impossível
         return 0;
-    fi->inicio = (fi->inicio + 1) % 30; // move a posicao do inicio
+    fi->inicio = (fi->inicio + 1) % 30; // move a posição do início
     fi->qtd--;
     return 1;
 }
@@ -255,10 +256,10 @@ int remove_deck(Deck* fi){
 int consulta_deck(Deck* fi, int *idcarta){
     if (fi == NULL)
         return -1;
-    if (fi->qtd == 0) // se deck vazio, entao impossivel
+    if (fi->qtd == 0) // se deck vazio, então impossível
         return 0;
-    // *idcarta = fi->info[fi->inicio].ID_carta; // puxa ID da primeira carta da fila por referencia [METODO CARTA]
-    *idcarta = fi->info[fi->inicio]; // puxa ID da primeira carta da fila por referencia [METODO INT]
+    // *idcarta = fi->info[fi->inicio].ID_carta; // puxa ID da primeira carta da fila por referência [MÉTODO CARTA]
+    *idcarta = fi->info[fi->inicio]; // puxa ID da primeira carta da fila por referência [MÉTODO INT]
     return 1;
 }
 
@@ -266,10 +267,10 @@ int inicializa_deck(Deck* fi){
     if (fi == NULL)
         return -1;
     int counter = 30, x, index;
-    while (counter > 0){                    // gera numero aleatorio como indice
+    while (counter > 0){                    // gera número aleatório como índice
         index = rand()%15;                  // e puxa info da carta do array
         if (carta_db[index].qtleft > 0){    // se o qtleft dela ainda for > 0
-            x = insere_deck(fi, index);     // se nao, refaz o processo ate que
+            x = insere_deck(fi, index);     // se não, refaz o processo até que
             carta_db[index].qtleft--;       // todas as 30 cartas tenham sido
             counter--;                      // guardadas no deck
         }
@@ -284,16 +285,16 @@ int embaralha_deck(Deck* fi){
     // aloca um vetor auxiliar de tamanho tam para armazenar as cartas atuais no deck
     int* aux = (int*) malloc(sizeof(int) * tam);
     for(i = 0; i < tam; i++){               // este loop salva o ID da primeira carta
-        x = consulta_deck(fi, &aux[i]);     // em aux e a remove do deck; repete ate
+        x = consulta_deck(fi, &aux[i]);     // em aux e a remove do deck; repete até
         x = remove_deck(fi);                // que o deck esteja vazio
     }
-    while (tam > 0){                            // este loop gera um indice aleatorio
-        index = rand()%tam;                     // de modulo tam e insere a carta
+    while (tam > 0){                            // este loop gera um índice aleatório
+        index = rand()%tam;                     // de módulo tam e insere a carta
         x = insere_deck(fi, aux[index]);        // de volta no deck
         if (index != tam - 1){
             for (i = index; i < tam - 1; i++) // este loop reorganiza aux para remover
-                aux[i] = aux[i + 1];          // espacos vazios do meio e garantir que
-        }                                     // o ultimo dado do array nao se perca
+                aux[i] = aux[i + 1];          // espaços vazios do meio do array e
+        }                                     // garantir que o último dado não se perca
         tam--;
     }
     free(aux);
@@ -315,14 +316,14 @@ void reseta_db(){
 }
 
 Mao* cria_mao(){
-    // aloca a memoria para a lista da mao
+    // aloca a memória para a lista da mão
     Mao* mi = (Mao*) malloc(sizeof(Mao));
     if (mi == NULL){
         printf("ERRO MEMMAO: low memo\n");
         system("pause");
         exit(1);
     }
-    // se ok, inicializa a mao com cartas nulas para evitar data junk
+    // se ok, inicializa a mão com cartas nulas para evitar data junk
     mi->qtd_cartas = 0;
     for(int i = 0; i < 5; i++)
         mi->info[i] = carta_db[15].carta_info;
@@ -337,13 +338,13 @@ void libera_mao(Mao* mi){
 int mao_cheia(Mao* mi){
     if(mi == NULL)
         return -1;
-    return (mi->qtd_cartas == 5); // se mao cheia, retorna 1, se nao, 0
+    return (mi->qtd_cartas == 5); // se mão cheia, retorna 1, se não, 0
 }
 
 int mao_vazia(Mao* mi){
     if(mi == NULL)
         return -1;
-    return (mi->qtd_cartas == 0); // se mao vazia, retorna 1, se nao, 0
+    return (mi->qtd_cartas == 0); // se mão vazia, retorna 1, se não, 0
 }
 
 int descarta_carta(Mao* mi, int index){
@@ -352,11 +353,11 @@ int descarta_carta(Mao* mi, int index){
     if(mao_vazia(mi))
         return 0;
     int i;
-    if(index != 4){                                          // se indice nao for 4,
+    if(index != 4){                                          // se índice nao for 4,
         for(i = index; i < mi->qtd_cartas - 1; i++)          // reorganiza a mao
             mi->info[i] = mi->info[i + 1];
     }
-    mi->info[i] = carta_db[15].carta_info; // coloca espaço vazio no ultimo slot
+    mi->info[i] = carta_db[15].carta_info; // coloca espaço vazio no último slot
     mi->qtd_cartas--; // decrementa contador quantidade
     return 1;
 }
@@ -364,7 +365,7 @@ int descarta_carta(Mao* mi, int index){
 int insere_mao(Mao* mi, int idcarta){
     if(mi == NULL)
         return 0;
-    if(mao_cheia(mi)) // se mao cheia, entao impossivel
+    if(mao_cheia(mi)) // se mão cheia, então impossível
         return 0;
     int j, i;
     for(i = 0; i < mi->qtd_cartas; i++){        // este loop procura o slot
@@ -372,8 +373,8 @@ int insere_mao(Mao* mi, int idcarta){
             break;                              // tem id menor que as outras
     }
     for(j = mi->qtd_cartas - 1; j >= i; j--)    // este loop puxa as cartas para frente
-        mi->info[j + 1] = mi->info[j];          // (abre o espaco)
-    mi->info[i] = carta_db[idcarta].carta_info; // para entao inserir a carta atual
+        mi->info[j + 1] = mi->info[j];          // (abre o espaço)
+    mi->info[i] = carta_db[idcarta].carta_info; // para então inserir a carta atual
     mi->qtd_cartas++; // incrementa contador quantidade
     return 1;
 }
@@ -381,10 +382,10 @@ int insere_mao(Mao* mi, int idcarta){
 int consulta_mao(Mao* mi, int index, int *idconsulta){
     if (mi == NULL)
         return -1;
-    if (mao_vazia(mi) || index >= mi->qtd_cartas) // se mao vazia ou index > tam da lista, entao, impossivel
+    if (mao_vazia(mi) || index >= mi->qtd_cartas) // se mão vazia ou index > tam da lista, então, impossível
         return 0;
     int x;
-    *idconsulta = mi->info[index].ID_carta; // copia o id da carta solicitada por referencia
+    *idconsulta = mi->info[index].ID_carta; // copia o id da carta solicitada por referência
     return 1;
 }
 
@@ -392,16 +393,16 @@ int compra_carta(Deck* f1, Mao* m1){
     if (f1 == NULL || m1 == NULL)
         return -1;
     if (deck_vazio(f1)){
-        printf("Seu deck esta vazio!\n");
+        printf("Seu deck está vazio!\n");
         return 0;
     }
     if (mao_cheia(m1)){
-        printf("Sua mao esta cheia!\n");
+        printf("Sua mão está cheia!\n");
         return 0;
     }
     int x, carta;
     x = consulta_deck(f1, &carta); // pega id da carta
-    x = insere_mao(m1, carta); // insere na mao
+    x = insere_mao(m1, carta); // insere na mão
     x = remove_deck(f1); // remove do deck
     return 1;
 }
@@ -409,12 +410,12 @@ int compra_carta(Deck* f1, Mao* m1){
 int usa_carta(Mao* mi, int index, int *idconsulta){
     if(mi == NULL)
         return -1;
-    if (mao_vazia(mi)) // se mao vazia, impossivel
+    if (mao_vazia(mi)) // se mão vazia, impossível
         return 0;
     if (index >= mi->qtd_cartas) // se index fora do limite, retorna erro
         return -1;
     int x;
-    x = consulta_mao(mi, index, idconsulta); // passa id da carta selecionada por referencia
+    x = consulta_mao(mi, index, idconsulta); // passa id da carta selecionada por referência
     x = descarta_carta(mi, index); // descarta a carta
     return 1;
 }

@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <locale.h>
 #include "deck.h"
 
 
 int main(void)
 {   
     // arquivo de testes so para verificar se as funcoes estao ok
+    setlocale(LC_ALL, "Portuguese");
     srand(time(0));
     cria_db_carta(); // OK
     Deck* fi;
