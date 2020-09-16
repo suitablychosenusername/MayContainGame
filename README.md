@@ -26,6 +26,6 @@ Projeto final da disciplina de EDA
     - [ ] Funções de Operações do Player
     - [ ] Funções de Operações dos Inimigos
 
-- [ ] \(Opicional) Arte dos inimigos ASCII
-- [ ] \(Opicional) Texto colorido
-- [ ] \(Opicional) Mais inimigos
+- [ ] \(Opcional) Arte dos inimigos ASCII
+- [ ] \(Opcional) Texto colorido
+- [ ] \(Opcional) Mais inimigos
