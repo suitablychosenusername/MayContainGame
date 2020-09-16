@@ -11,8 +11,17 @@ Projeto final da disciplina de EDA
 - [ ] História (textual)
     - [ ] Passagem de tempo (4 partes)
     - [ ] Escrita dos Diálogos das Quests
+        - [ ] Quest 1
+        - [ ] Quest 2
+        - [ ] Quest 3
     - [ ] Implementação dos Diálogos das Quests
+        - [ ] Quest 1
+        - [ ] Quest 2
+        - [ ] Quest 3
     - [ ] Definição dos Pontos de Possíveis Batalhas
+        - [ ] Quest 1
+        - [ ] Quest 2
+        - [ ] Quest 3
 - [X] Cartas (9 de Ataque | 3 de Defesa | 3 de Cura)
 - [ ] Inimigos (3 tipos de inimigos)
     - [ ] Stats
@@ -22,6 +31,11 @@ Projeto final da disciplina de EDA
     - [ ] Geração de Inimigos
     - [X] Funções de Controle do Deck
     - [ ] Implementação dos Efeitos das Cartas
+        - [ ] Ataque
+        - [ ] Cura
+        - [ ] Saque
+        - [ ] Previne
+        - [ ] Escudo
     - [ ] Cálculo de Dano
     - [ ] Funções de Operações do Player
     - [ ] Funções de Operações dos Inimigos
