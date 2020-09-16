@@ -4,24 +4,6 @@
 #include <time.h>
 #include "deck.h"
 
-// typedef struct carta {
-//     int ID_carta; // id utilizado para procurar cartas no array db
-//     char nome_carta[31]; // nome da carta, para display
-//     char elemento_carta[5]; // elemento da carta, para o calculo de dano
-//     float multiplicador_carta; // valor do multiplicador para o calculo de dano
-//     char efeito[8]; // tipo da carta, usado para definir acao no combate
-//     char descricao[120]; // descricao da carta. para display
-// } Carta; // estrutura da carta
-
-// typedef struct databasecarta{
-//     int qtleft; // qtd restante da carta para ser embaralhadas
-//     int qtdefault; // qtd padrao para resetar 
-//     Carta carta_info; // criar um vetor Inventario e uma funcao random pra montar o deck
-// } DatabaseCarta; // estrutura do array que servira de banco de dados das cartas
-
-// typedef struct deck Deck; // ponteiro de fila estatica para o Deck
-// typedef struct mao Mao; // ponteiro de lista estatica para a Mao
-
 // TODO:
 // Struct Carta                                         OK
 // Struct Deck                                          OK
@@ -48,8 +30,6 @@ struct mao {
     Carta info[5];
     int qtd_cartas;
 }; // estrutura da lista (Mao)
-
-DatabaseCarta *carta_db; // array global que servira de banco de dados das cartas
 
 void cria_db_carta(){
     // aloca a memoria para o array:
@@ -317,6 +297,7 @@ int embaralha_deck(Deck* fi){
         tam--;
     }
     free(aux);
+    return 1;
 }
 
 int esvazia_deck(Deck* fi){
@@ -326,10 +307,11 @@ int esvazia_deck(Deck* fi){
     return 1;
 }
 
-int reseta_db(){
+void reseta_db(){
     int i;
     for (i = 0; i < 15; i++)
         carta_db[i].qtleft = carta_db[i].qtdefault; // retorna os valores default para qtleft
+    return;
 }
 
 Mao* cria_mao(){
@@ -349,6 +331,7 @@ Mao* cria_mao(){
 
 void libera_mao(Mao* mi){
     free(mi);
+    return;
 }
 
 int mao_cheia(Mao* mi){
@@ -434,4 +417,19 @@ int usa_carta(Mao* mi, int index, int *idconsulta){
     x = consulta_mao(mi, index, idconsulta); // passa id da carta selecionada por referencia
     x = descarta_carta(mi, index); // descarta a carta
     return 1;
+}
+
+void imprime_deck(Deck* fi){
+    int i, tam = fi->qtd;
+    for(i = fi->inicio; tam > 0; i = (i + 1) % 30, tam--){
+        printf("Carta %i: %i | ", i, fi->info[i]);
+    }
+    printf("\n");
+}
+
+void imprime_mao(Mao* mi){
+    int i, tam = 5;
+    printf("Mao:\n");
+    for(i = 0; i < tam; i++)
+        printf("ID: %i | Nome: %s | Elem: %s | Efeito: %s | Mult: %.02f\nDesc:\n%s\n", mi->info[i].ID_carta, mi->info[i].nome_carta, mi->info[i].elemento_carta, mi->info[i].efeito, mi->info[i].multiplicador_carta, mi->info[i].descricao);
 }

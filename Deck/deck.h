@@ -58,7 +58,7 @@ int embaralha_deck(Deck* fi);
 int esvazia_deck(Deck* fi);
 
 // reseta o array banco de dados de cartas para uma nova inicializacao
-int reseta_db();
+void reseta_db();
 
 // cria o ponteiro para a mao
 Mao* cria_mao();
@@ -87,5 +87,9 @@ int compra_carta(Deck* f1, Mao* m1);
 // utiliza a carta do indice index e a remove da mao
 // (copia o id para idconsulta para extrair info do array carta_db)
 int usa_carta(Mao* mi, int index, int *idconsulta);
+
+void imprime_mao(Mao* mi);
+
+void imprime_deck(Deck* fi);
 
 #endif
