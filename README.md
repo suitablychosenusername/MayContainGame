@@ -6,6 +6,20 @@ Feito por:
 ----------------------------------------
 Projeto final da disciplina de EDA
 
+## Instruções de Compilação:
+    Até o momento, funcionando somente no Linux (Ubuntu 16.04);
+    
+    Utilizado a biblioteca Simple DirectMedia Layer (SDL).
+    Licenciada sob direitos zlib (http://www.zlib.net/zlib_license.html)
+    E disponibilizada gratuitamente em: https://www.libsdl.org/
+    
+    Extraia os arquivos em uma pasta e, através do terminal, navegue até o diretório onde extraiu os arquivos.
+    Utilize a seguinte linha de comando:
+    
+        gcc deck.c Inimigo.c main.c -o main -Wall -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+        
+    Depois execute o arquivo main criado
+----------------------------------------
 ## Objetivos:
 
 - [ ] História (textual)
