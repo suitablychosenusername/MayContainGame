@@ -26,8 +26,8 @@ Projeto final da disciplina de EDA
 - [X] Cartas (9 de Ataque | 3 de Defesa | 3 de Cura)
 - [X] Inimigos (4 tipos de inimigos)
     - [X] Stats
-    - [ ] Comportamento
-- [ ] Fluxo de Batalha
+    - [X] Comportamento
+- [X] Fluxo de Batalha
     - [X] Preparação do Deck
     - [X] Geração de Inimigos
     - [X] Funções de Controle do Deck
@@ -38,9 +38,9 @@ Projeto final da disciplina de EDA
         - [X] Previne
         - [X] Escudo
     - [X] Cálculo de Dano Player
-    - [ ] Cálculo de Dano Inimigos
+    - [X] Cálculo de Dano Inimigos
     - [X] Funções de Operações do Player
-    - [ ] Funções de Operações dos Inimigos<br>
+    - [X] Funções de Operações dos Inimigos<br>
 ----------------------------------------
 * Opcionais:
 
