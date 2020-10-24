@@ -1,20 +1,268 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <locale.h>
 #include "SDL/SDL2-2.0.12/i686-w64-mingw32/include/SDL2/SDL.h"
 #include "SDL/SDL2-2.0.12/i686-w64-mingw32/include/SDL2/SDL_image.h"
 #include "SDL/SDL2-2.0.12/i686-w64-mingw32/include/SDL2/SDL_mixer.h"
 #include "SDL/SDL2-2.0.12/i686-w64-mingw32/include/SDL2/SDL_ttf.h"
-#include "deck.h"
-#include "Inimigo.h"
 
-const int SCR_WID = 1280;
-const int SCR_HEI = 750;
+/* DECK */
 
-enum ICON_NUM {
-    SHIELD_ICON,
-    PREV_ICON
+typedef struct carta {
+    int ID_carta; // id utilizado para procurar cartas no array carta_db; ID = index da carta no array
+    char nome_carta[31]; // nome da carta, para display
+    char elemento_carta[5]; // elemento da carta, para o cálculo de dano
+    int multiplicador_carta; // valor do multiplicador para o cálculo de dano
+    char efeito[8]; // tipo da carta, usado para definir ação no combate
+    char descricao[151]; // descrição da carta, para 
+    char path[35]; // caminho da textura
+    int range;
+    int rangemin;
+    int sfx;
+} Carta; // estrutura da carta
+
+typedef struct databasecarta{
+    int qtleft; // qtd restante da carta a ser embaralhada
+    int qtdefault; // qtd padrao para resetar 
+    Carta carta_info; // dados da carta
+} DatabaseCarta; // estrutura do array global que servirá de banco de dados das cartas
+
+typedef struct elemento{
+    int info;
+    struct elemento* prox;
+} Elem;
+
+struct fila_deck {
+    int qtd;
+    Elem* inicio;
+    Elem* final;
+}; // estrutura da fila (Deck)
+
+struct mao {
+    Carta info[5];
+    int qtd_cartas;
+}; // estrutura da lista (Mao)
+
+typedef struct fila_deck Deck; // ponteiro de fila estática para o Deck
+typedef struct mao Mao; // ponteiro de lista estática para a Mao
+
+extern DatabaseCarta* carta_db; // variável global que será usada como database das cartas
+
+// cria o db de cartas
+void cria_db_carta();
+
+// libera o db de cartas
+void libera_db_carta();
+
+// cria o ponteiro para o deck
+Deck* cria_deck();
+
+// libera o ponteiro;
+void libera_deck(Deck* fi);
+
+// testa se deck está cheio
+int deck_cheio(Deck* fi);
+
+// testa se deck está vazio
+int deck_vazio(Deck* fi);
+
+// insere carta no deck
+int insere_deck(Deck* fi, int idcarta);
+
+// remove carta do deck
+int remove_deck(Deck* fi);
+
+// consulta o valor da primeira carta no deck e o salva por referência
+int consulta_deck(Deck* fi, int *idcarta);
+
+// retorna quantidade de cartas no deck
+int qtd_deck(Deck* fi);
+
+// prepara e embaralha o deck a primeira vez na luta
+int inicializa_deck(Deck* fi);
+
+// embaralha o deck à partir da condição atual do mesmo
+int embaralha_deck(Deck* fi);
+
+// esvazia o deck após a batalha para uma nova inicialização
+// (pode ser usado o libera_deck, porém, será necessário utilizar cria_deck novamente)
+int esvazia_deck(Deck* fi);
+
+// reseta o array banco de dados de cartas para uma nova inicialização
+void reseta_db();
+
+// cria o ponteiro para a mão
+Mao* cria_mao();
+
+// libera o ponteiro da mão
+void libera_mao(Mao* mi);
+
+// testa se mão está cheia
+int mao_cheia(Mao* mi);
+
+// testa se mão está vazia
+int mao_vazia(Mao* mi);
+
+// remove carta da mao
+int descarta_carta(Mao* mi, int index);
+
+// adiciona carta à mão
+int insere_mao(Mao* mi, int idcarta);
+
+// consulta a carta de índice = index da mão
+int consulta_mao(Mao* mi, int index, int *idconsulta);
+
+// retorna quantidade de cartas na mao
+int qtd_mao(Mao* mi);
+
+// adiciona carta à mão e remove do deck
+int compra_carta(Deck* f1, Mao* m1);
+
+// utiliza a carta de índice = index e a remove da mão
+// (copia o id para idconsulta para extrair info do array carta_db)
+int usa_carta(Mao* mi, int index, int *idconsulta);
+
+// coloca uma carta da mao no deck
+int mao_para_deck(Deck* fi, Mao* mi, int index);
+
+// imprime mao (desnecessario in-game; só para testes mesmo)
+void imprime_mao(Mao* mi);
+
+// imprime deck (desnecessario in-game; só para testes mesmo)
+void imprime_deck(Deck* fi);
+
+/* INIMIGO */
+
+enum MOVES{
+    ATTACK,
+    MUG,
+    FLEE,
+    SPECIAL_MOVE,
+    DEFEND,
+    SHUFFLE,
 };
+
+typedef struct moveset{
+    int mult_atk;
+    int discard_num;
+    int steal_chance;
+    int mult_special;
+    int flee_chance;
+    int mult_defend;
+    char nome_special[35];
+} Moveset;
+
+typedef struct chance{
+    int min;
+    int max;
+} Chance;
+
+typedef struct inimigo{
+    char nome[15];
+    int HP;
+    int ATK;
+    int DEF;
+    int buffdefault;
+    int RElemento[3];
+    char path[40];
+    int w;
+    int h;
+    Chance chance[6];
+    Moveset comportamento;
+    int scream;
+} Inimigo;
+
+typedef struct inimigoBatalha{
+    int hp;
+    int id;
+    int buff;
+    int buffCount;
+    int bolado;
+    int turno;
+    int derrotado;
+    int alpha;
+    int fleeCount;
+} InimigoBatalha;
+
+Inimigo* inimigo_db;
+
+void cria_db_inimigo();
+
+void libera_db_inimigo();
+
+void imprime_inimigo();
+
+/* AUDIO */
+
+enum commands{
+    PLAY,
+    PAUSE,
+    STOP,
+};
+
+enum bgm{
+    MENU,
+    BATTLE,
+    BATTLE_CRISIS,
+    BOSS_THEME,
+    BOSS_CRISIS,
+    BATTLE_WON,
+    GAME_OVER,
+    TOTAL_BGM,
+};
+
+enum sfx{
+    TITLE_START,
+    HIT,
+    HIT_CRIT,
+    HIT_PROTEC,
+    CAST,
+    HEAL,
+    HEAL_FULL,
+    FIRE1,
+    FIRE2,
+    FIRE3,
+    ICE1,
+    ICE2,
+    ICE3,
+    ELEC1,
+    ELEC2,
+    ELEC3,
+    SUPP_ESCUDO,
+    SUPP_PREV,
+    SUPP_TRICK,
+    HP_LOW,
+    MONSTER_HIT,
+    MONSTER_CRIT,
+    MONSTER_STEAL,
+    MONSTER_FLEE,
+    DEATH_PINGUIM,
+    DEATH_LADRAO,
+    DEATH_GOBLIN,
+    DEATH_ABU,
+    TOTAL_SFX,
+};
+
+// Audio
+Mix_Music **gBGM;
+
+// SFX
+Mix_Chunk **gSFX;
+
+int loadSounds();
+
+void closeSounds();
+
+void controlBGM(int bgmID, int command);
+
+void playSFX(int sfxID);
+
+/* MAIN */
 
 typedef struct player{
     int hp;
@@ -37,7 +285,14 @@ typedef struct seletor{
     int animation;
     int absorb;
     int primeiroTurno;
+    int crisis;
+    int playerDMG;
 } Seletor;
+
+enum ICON_NUM {
+    SHIELD_ICON,
+    PREV_ICON
+};
 
 typedef struct animation{
     int alpha;
@@ -48,47 +303,55 @@ typedef struct animation{
     SDL_Rect size;
 } Animation;
 
+extern const int SCR_WID;
+extern const int SCR_HEI;
+
 // window
-SDL_Window *gWindow = NULL;
+SDL_Window *gWindow;
 // window surface
-SDL_Surface *gSurface = NULL;
+SDL_Surface *gSurface;
 // imagem atual
-SDL_Surface *gCurrentSurface = NULL;
+SDL_Surface *gCurrentSurface;
 // Renderer
-SDL_Renderer *gRenderer = NULL;
+SDL_Renderer *gRenderer;
 // Texturas
-SDL_Texture *gTexture = NULL;
-SDL_Texture *gBGTexture = NULL;
-SDL_Texture **gEnemyTexture = NULL;
-SDL_Texture *gBoxTexture = NULL;
-SDL_Texture *gNameBoxTexture = NULL;
-SDL_Texture *gMenuBoxTexture = NULL;
-SDL_Texture *gBattleBoxTexture = NULL;
-SDL_Texture **gIconTexture = NULL;
-SDL_Texture **gCardTexture = NULL;
-SDL_Texture *gModTexture = NULL;
-SDL_Texture *gExpressionBoxTexture = NULL;
-SDL_Texture *gFakeRect = NULL;
-SDL_Texture *gCurrentScene = NULL;
+SDL_Texture *gLogo1;
+SDL_Texture *gLogo2;
+SDL_Texture *gArrow;
+SDL_Texture *gBGTexture;
+SDL_Texture **gEnemyTexture;
+SDL_Texture *gBoxTexture;
+SDL_Texture *gNameBoxTexture;
+SDL_Texture *gMenuBoxTexture;
+SDL_Texture *gBattleBoxTexture;
+SDL_Texture **gIconTexture;
+SDL_Texture **gCardTexture;
+SDL_Texture *gModTexture;
+SDL_Texture *gFakeRect;
+SDL_Texture *gCurrentScene;
 // Fonte
-TTF_Font *gFont = NULL;
+TTF_Font *gFont;
 // rendered texture
-SDL_Texture *gFontTexture = NULL;
-// Viewports
-    const SDL_Rect battleBGVP = {0, 0, 1280, 582};
-    const SDL_Rect menuVP = {0, 562, 1280, 187};
-    const SDL_Rect statsVP = {0, 562, 213, 187};
-    const SDL_Rect stockVP = {248, 562, 1056, 187};
-    const SDL_Rect enemyAreaVP = {120, 30, 1040, 532};
-    const SDL_Rect msgAreaTopVP = {190, 30, 900, 160};
-    const SDL_Rect msgAreaBottomVP = {190, 570, 900, 160};
+SDL_Texture *gFontTexture;
+// Viewports    
+    extern const SDL_Rect logo1VP;
+    extern const SDL_Rect logo2VP;
+    extern const SDL_Rect battleBGVP;
+    extern const SDL_Rect menuVP;
+    extern const SDL_Rect statsVP;
+    extern const SDL_Rect stockVP;
+    extern const SDL_Rect enemyAreaVP;
+    extern const SDL_Rect msgAreaTopVP;
+    extern const SDL_Rect msgAreaBottomVP;
+    SDL_Rect arrowVP;
 // Cores
-    const SDL_Color color = {200,200,200};
-    const SDL_Color black = {0,0,0};
-    const SDL_Color blue = {20,20,204};
-    const SDL_Color green = {0,128,0};
-    const SDL_Color red = {204,0,0};
-    const SDL_Color yellow = {204,204,0};
+    extern const SDL_Color color;
+    extern const SDL_Color black;
+    extern const SDL_Color blue;
+    extern const SDL_Color sky;
+    extern const SDL_Color green;
+    extern const SDL_Color red;
+    extern const SDL_Color yellow;
 
 // SDL basico - inicializa API
 int init();

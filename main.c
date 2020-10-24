@@ -1,11 +1,63 @@
 #define SDL_MAIN_HANDLED
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <locale.h>
+
 #include "main.h"
-   
+
+const int SCR_WID = 1280;
+const int SCR_HEI = 750;
+
+// window
+SDL_Window *gWindow = NULL;
+// window surface
+SDL_Surface *gSurface = NULL;
+// imagem atual
+SDL_Surface *gCurrentSurface = NULL;
+// Renderer
+SDL_Renderer *gRenderer = NULL;
+// Texturas
+SDL_Texture *gLogo1 = NULL;
+SDL_Texture *gLogo2 = NULL;
+SDL_Texture *gArrow = NULL;
+SDL_Texture *gBGTexture = NULL;
+SDL_Texture **gEnemyTexture = NULL;
+SDL_Texture *gBoxTexture = NULL;
+SDL_Texture *gNameBoxTexture = NULL;
+SDL_Texture *gMenuBoxTexture = NULL;
+SDL_Texture *gBattleBoxTexture = NULL;
+SDL_Texture **gIconTexture = NULL;
+SDL_Texture **gCardTexture = NULL;
+SDL_Texture *gModTexture = NULL;
+SDL_Texture *gFakeRect = NULL;
+SDL_Texture *gCurrentScene = NULL;
+// Fonte
+TTF_Font *gFont = NULL;
+// rendered texture
+SDL_Texture *gFontTexture = NULL;
+// Viewports    
+    const SDL_Rect logo1VP = {600, 150, 137, 61};
+    const SDL_Rect logo2VP = {269, 194, 742, 372};
+    const SDL_Rect battleBGVP = {-10, 0, 1300, 582};
+    const SDL_Rect menuVP = {0, 562, 1280, 187};
+    const SDL_Rect statsVP = {0, 562, 213, 187};
+    const SDL_Rect stockVP = {248, 562, 1056, 187};
+    const SDL_Rect enemyAreaVP = {120, 30, 1040, 532};
+    const SDL_Rect msgAreaTopVP = {190, 30, 900, 160};
+    const SDL_Rect msgAreaBottomVP = {190, 570, 900, 160};
+    SDL_Rect arrowVP = {832, 112, 48, 48};
+// Cores
+    const SDL_Color color = {200,200,200};
+    const SDL_Color black = {0,0,0};
+    const SDL_Color blue = {20,20,204};
+    const SDL_Color sky = {0,206,255};
+    const SDL_Color green = {0,128,0};
+    const SDL_Color red = {204,0,0};
+    const SDL_Color yellow = {204,204,0};
+// BGM e SFX
+Mix_Music **gBGM = NULL;
+Mix_Chunk **gSFX = NULL;
+
+Inimigo *inimigo_db = NULL;
+DatabaseCarta* carta_db = NULL;
+
 int init(){
     int success = 1;
     if(SDL_Init(SDL_INIT_VIDEO) < 0){
@@ -35,11 +87,25 @@ int init(){
                     printf("SDL_Image had some trouble initializing. SDL_Image error: %s\n", IMG_GetError());
                     success = 0;
                 }
+
                 if(TTF_Init() == -1){
                     printf("SDL_ttf fail. %s\n", TTF_GetError());
                     success = 0;
                 }
                 srand(time(0));
+
+                // if(!Mix_Init(MIX_INIT_MP3)){
+                //     printf("Mix fail. %s\n", Mix_GetError());
+                //     success = 0;
+                // }
+
+				if( Mix_OpenAudio(44100, MIX_INIT_MP3, 2, 2048) < 0 )
+				{
+					printf( "SDL_mixer could not initialize - SDL_mixer Error: %s\n", Mix_GetError() );
+					success = 0;
+				}
+
+                Mix_VolumeMusic(80);
             }
         }
     }
@@ -102,27 +168,42 @@ int renderTextoWrapped(char *string, SDL_Color cor){
 
 int loadMediaBasic(){
     int success = 1;
-    gBGTexture = loadTexture("Sprites/Misc/bg2.png");
+    gArrow = loadTexture("./Sprites/Misc/continueArrow.png");
+    if(gArrow == NULL){
+        printf("Arrow fail. \n");
+        success = 0;
+    }
+    gLogo1 = loadTexture("./Sprites/Misc/logo1.png");
+    if(gLogo1 == NULL){
+        printf("Logo1 fail. \n");
+        success = 0;
+    }
+    gLogo2 = loadTexture("./Sprites/Misc/logo2.png");
+    if(gLogo2 == NULL){
+        printf("Logo2 fail. \n");
+        success = 0;
+    }
+    gBGTexture = loadTexture("./Sprites/Misc/bg2.png");
     if(gBGTexture == NULL){
         printf("BGTexture fail. \n");
         success = 0;
     }
-    gBattleBoxTexture = loadTexture("Sprites/Misc/textbox1.png");
+    gBattleBoxTexture = loadTexture("./Sprites/Misc/textbox1.png");
     if(gBattleBoxTexture == NULL){
         printf("BoxTexture fail. \n");
         success = 0;
     }
-    gBoxTexture = loadTexture("Sprites/Misc/textbox2.png");
+    gBoxTexture = loadTexture("./Sprites/Misc/textbox2.png");
     if(gBoxTexture == NULL){
         printf("BoxTexture fail. \n");
         success = 0;
     }
-    gNameBoxTexture = loadTexture("Sprites/Misc/namebox2.png");
+    gNameBoxTexture = loadTexture("./Sprites/Misc/namebox2.png");
     if(gNameBoxTexture == NULL){
         printf("BoxTexture fail. \n");
         success = 0;
     }
-    gMenuBoxTexture = loadTexture("Sprites/Misc/menubox.png");
+    gMenuBoxTexture = loadTexture("./Sprites/Misc/menubox.png");
     if(gMenuBoxTexture == NULL){
         printf("BoxTexture fail. \n");
         success = 0;
@@ -149,19 +230,14 @@ int loadMediaBasic(){
         }
     }
     gIconTexture = (SDL_Texture**) malloc(sizeof(SDL_Texture*) * 2);
-    gIconTexture[SHIELD_ICON] = loadTexture("Sprites/Misc/escudo.png");
+    gIconTexture[SHIELD_ICON] = loadTexture("./Sprites/Misc/escudo.png");
     if(gIconTexture[SHIELD_ICON] == NULL){
         printf("ShieldTexture fail. \n");
         success = 0;
     }
-    gIconTexture[PREV_ICON] = loadTexture("Sprites/Misc/prev.png");
+    gIconTexture[PREV_ICON] = loadTexture("./Sprites/Misc/prev.png");
     if(gIconTexture[PREV_ICON] == NULL){
         printf("PrevTexture fail. \n");
-        success = 0;
-    }
-    gExpressionBoxTexture = loadTexture("Sprites/Misc/twewy.png");
-    if(gExpressionBoxTexture == NULL){
-        printf("ExpresisonTexture fail. \n");
         success = 0;
     }
     gCurrentScene = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCR_WID, SCR_HEI);
@@ -169,6 +245,8 @@ int loadMediaBasic(){
         printf("CurrentScene fail. \n");
         success = 0;
     }
+    if(!loadSounds())
+        success = 0;
     return success;
 }
 
@@ -215,6 +293,9 @@ void closeWindow(){
     SDL_DestroyTexture(gBattleBoxTexture);
     gBattleBoxTexture = NULL;
     SDL_DestroyTexture(gBGTexture);
+
+    closeSounds();
+
     gBGTexture = NULL;
     SDL_DestroyRenderer(gRenderer);
     SDL_DestroyWindow(gWindow);
@@ -328,7 +409,7 @@ void antiMingwItoa(char *string, int x){
 }
 
 void renderClear(){
-    SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
     SDL_RenderClear(gRenderer);
 }
 
@@ -348,7 +429,7 @@ void renderMessageWrapped(char *msg, SDL_Rect *Viewport){
     msgArea.h *= lines * 0.5;
     msgArea.w *= lines * 0.5;
     SDL_RenderSetViewport(gRenderer, Viewport);
-    loadMediaCurrentTexture("Sprites/Misc/textbox1.png");
+    loadMediaCurrentTexture("./Sprites/Misc/textbox1.png");
     SDL_SetTextureAlphaMod(gModTexture, 200);
     SDL_RenderCopy(gRenderer, gModTexture, NULL, NULL);
 
@@ -377,39 +458,134 @@ void fadeInOut(int r, int g, int b, int alpha){
 
 void mainMenu(Player *player, SDL_Event *e, int* quit){
     int alpha = 255, tick = 0, pause = 1;
-    SDL_Rect logo = {SCR_WID/4, SCR_HEI/4, SCR_WID/2, SCR_HEI/2};
+    
+    // Viewports e Texturas
+    SDL_Rect cloudBGVP = {0, 0, 1280, 800};
+    SDL_Rect cloudBGVP2 = {0, 0, 1280, 800};
+    SDL_Rect cloudBGVP3 = {0, -10, 1280, 800};
+    SDL_Rect cloudBGVPaux = {1280, 0, 1280, 800};
+    SDL_Rect cloudBGVP2aux = {1280, 0, 1280, 800};
+    SDL_Rect cloudBGVP3aux = {1280, -10, 1280, 800};
     SDL_Rect pressAny;
+    SDL_Texture *cloud1 = NULL;
+    SDL_Texture *cloud2 = NULL;
+    SDL_Texture *cloud3 = NULL;
+    cloud1 = loadTexture("./Sprites/Misc/clouds4.png");
+    cloud2 = loadTexture("./Sprites/Misc/clouds3.png");
+    cloud3 = loadTexture("./Sprites/Misc/clouds2.png");
+    if(cloud1 == NULL || cloud2 == NULL || cloud3 == NULL){
+        printf("Failed cloud.\n");
+        *quit = 1;
+        return;
+    }
     TTF_SizeUTF8(gFont, "Aperte qualquer tecla para continuar.", &pressAny.w, &pressAny.h);
     pressAny.x = SCR_WID / 2 - pressAny.w / 2;
-    pressAny.y = 3 * SCR_HEI / 4 - pressAny.h / 2;
+    pressAny.y = 3 * SCR_HEI / 4 - pressAny.h / 2 + 20;
     SDL_RenderSetViewport(gRenderer, NULL);
+    Mix_FadeInMusic(gBGM[MENU], -1, 1000);
+    // controlBGM(MENU, PLAY);
     while(alpha > 0){
-        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 255);
+        SDL_SetRenderDrawColor(gRenderer, 107, 225, 255, 255);
         SDL_RenderFillRect(gRenderer, NULL);
-        renderPrintOutline("LOGO", &yellow, &black, 5, &logo);
+        SDL_RenderCopy(gRenderer, cloud1, NULL, &cloudBGVP);
+        SDL_RenderCopy(gRenderer, cloud1, NULL, &cloudBGVPaux);
+        SDL_RenderCopy(gRenderer, cloud2, NULL, &cloudBGVP2);
+        SDL_RenderCopy(gRenderer, cloud2, NULL, &cloudBGVP2aux);
+        SDL_RenderCopy(gRenderer, cloud3, NULL, &cloudBGVP3);
+        SDL_RenderCopy(gRenderer, cloud3, NULL, &cloudBGVP3aux);
+        cloudBGVP.x -= 1; cloudBGVPaux.x -= 1;
+        cloudBGVP2.x -= 3; cloudBGVP2aux.x -= 3;
+        cloudBGVP3.x -= 5; cloudBGVP3aux.x -= 5;
+        if(cloudBGVP.x <= -1280)        cloudBGVP.x = 1280;
+        if(cloudBGVPaux.x <= -1280)     cloudBGVPaux.x = 1280;
+        if(cloudBGVP2.x <= -1280)       cloudBGVP2.x = 1280;
+        if(cloudBGVP2aux.x <= -1280)    cloudBGVP2aux.x = 1280;
+        if(cloudBGVP3.x <= -1280)       cloudBGVP3.x = 1280;
+        if(cloudBGVP3aux.x <= -1280)    cloudBGVP3aux.x = 1280;
+        SDL_RenderCopy(gRenderer, gLogo1, NULL, &logo1VP);
+        SDL_RenderCopy(gRenderer, gLogo2, NULL, &logo2VP);
         fadeInOut(0xFF, 0xFF, 0xFF, alpha);
         SDL_RenderPresent(gRenderer);
-        alpha-=5;
+        alpha-=3;
     }
     while(pause)
     {
-        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 255);
+        SDL_SetRenderDrawColor(gRenderer, 107, 225, 255, 255);
         SDL_RenderFillRect(gRenderer, NULL);
-        renderPrintOutline("LOGO", &yellow, &black, 5, &logo);
-        if(tick){
-            renderPrintOutline("Aperte qualquer tecla para continuar", &color, &black, 2, &pressAny);
-        }
+        SDL_RenderCopy(gRenderer, cloud1, NULL, &cloudBGVP);
+        SDL_RenderCopy(gRenderer, cloud1, NULL, &cloudBGVPaux);
+        SDL_RenderCopy(gRenderer, cloud2, NULL, &cloudBGVP2);
+        SDL_RenderCopy(gRenderer, gLogo1, NULL, &logo1VP);
+        SDL_RenderCopy(gRenderer, cloud2, NULL, &cloudBGVP2aux);
+        SDL_RenderCopy(gRenderer, cloud3, NULL, &cloudBGVP3);
+        SDL_RenderCopy(gRenderer, gLogo2, NULL, &logo2VP);
+        SDL_RenderCopy(gRenderer, cloud3, NULL, &cloudBGVP3aux);
+        cloudBGVP.x -= 1; cloudBGVPaux.x -= 1;
+        cloudBGVP2.x -= 3; cloudBGVP2aux.x -= 3;
+        cloudBGVP3.x -= 5; cloudBGVP3aux.x -= 5;
+        if(cloudBGVP.x <= -1280)        cloudBGVP.x = 1280;
+        if(cloudBGVPaux.x <= -1280)     cloudBGVPaux.x = 1280;
+        if(cloudBGVP2.x <= -1280)       cloudBGVP2.x = 1280;
+        if(cloudBGVP2aux.x <= -1280)    cloudBGVP2aux.x = 1280;
+        if(cloudBGVP3.x <= -1280)       cloudBGVP3.x = 1280;
+        if(cloudBGVP3aux.x <= -1280)    cloudBGVP3aux.x = 1280;
+        if(tick <= 50)  renderPrintOutline("Aperte qualquer tecla para continuar", &color, &black, 2, &pressAny);
         SDL_RenderPresent(gRenderer);
-        tick = (tick + 1) % 2;
-        SDL_Delay(1000);
+        
+        tick++;
+        if(tick >= 100)
+            tick = 0;
+
         SDL_FlushEvent(SDL_MOUSEBUTTONDOWN);
         SDL_FlushEvent(SDL_MOUSEMOTION);
         SDL_FlushEvent(SDL_KEYDOWN);
         while(SDL_PollEvent(e) != 0){
-            if(e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_KEYDOWN){
-                player->mainMenu = 0;
+            if((e->type == SDL_KEYDOWN && e->key.keysym.sym == SDLK_ESCAPE) || e->type == SDL_QUIT){
+                *quit = 1;
+                SDL_DestroyTexture(cloud1);
+                SDL_DestroyTexture(cloud2);
+                SDL_DestroyTexture(cloud3);
                 return;
             }
+            else if(e->type == SDL_MOUSEBUTTONDOWN || (e->type == SDL_KEYDOWN && e->key.keysym.sym != SDLK_ESCAPE)){
+                player->mainMenu = 0;
+                Mix_FadeOutMusic(2000);
+                while(alpha < 255){
+                    SDL_SetRenderDrawColor(gRenderer, 107, 225, 255, 255);
+                    SDL_RenderFillRect(gRenderer, NULL);
+                    SDL_RenderCopy(gRenderer, cloud1, NULL, &cloudBGVP);
+                    SDL_RenderCopy(gRenderer, cloud1, NULL, &cloudBGVPaux);
+                    SDL_RenderCopy(gRenderer, cloud2, NULL, &cloudBGVP2);
+                    SDL_RenderCopy(gRenderer, cloud2, NULL, &cloudBGVP2aux);
+                    SDL_RenderCopy(gRenderer, cloud3, NULL, &cloudBGVP3);
+                    SDL_RenderCopy(gRenderer, cloud3, NULL, &cloudBGVP3aux);
+                    cloudBGVP.x -= 1; cloudBGVPaux.x -= 1;
+                    cloudBGVP2.x -= 3; cloudBGVP2aux.x -= 3;
+                    cloudBGVP3.x -= 5; cloudBGVP3aux.x -= 5;
+                    if(cloudBGVP.x <= -1280)
+                        cloudBGVP.x = 1280;
+                    if(cloudBGVPaux.x <= -1280)
+                        cloudBGVPaux.x = 1280;
+                    if(cloudBGVP2.x <= -1280)
+                        cloudBGVP2.x = 1280;
+                    if(cloudBGVP2aux.x <= -1280)
+                        cloudBGVP2aux.x = 1280;
+                    if(cloudBGVP3.x <= -1280)
+                        cloudBGVP3.x = 1280;
+                    if(cloudBGVP3aux.x <= -1280)
+                        cloudBGVP3aux.x = 1280;
+                    SDL_RenderCopy(gRenderer, gLogo1, NULL, &logo1VP);
+                    SDL_RenderCopy(gRenderer, gLogo2, NULL, &logo2VP);
+                    fadeInOut(0x00, 0x00, 0x00, alpha);
+                    SDL_RenderPresent(gRenderer);
+                    alpha+=3;
+                }
+                SDL_DestroyTexture(cloud1);
+                SDL_DestroyTexture(cloud2);
+                SDL_DestroyTexture(cloud3);
+                return;
+            }
+            
         }
     }
 }
@@ -427,14 +603,15 @@ void gameOver(SDL_Event *e){
     pressAny.x = SCR_WID / 2 - pressAny.w / 2;
     pressAny.y = 3 * SCR_HEI / 4 - pressAny.h / 2;
     SDL_RenderSetViewport(gRenderer, NULL);
+    Mix_FadeInMusic(gBGM[GAME_OVER], -1, 1000);
     while(alpha < 255){
-        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, alpha);
+        SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, alpha);
         SDL_RenderFillRect(gRenderer, NULL);
         SDL_RenderPresent(gRenderer);
         alpha += 5;
     }
     while(alpha > 0){
-        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 255);
+        SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 255);
         SDL_RenderFillRect(gRenderer, NULL);
         renderPrintOutline("Game Over", &red, &color, 2, &gameover);
         fadeInOut(0x00, 0x00, 0x00, alpha);
@@ -496,6 +673,20 @@ void renderBattle(Player *player, SDL_Event *e, Deck **deck, Mao **mao, SDL_Rect
     renderClear();
     
     // Battle Background
+    if(select->playerDMG){
+        SDL_Rect battleaux;
+        battleaux = battleBGVP;
+        if(select->animation < 3)       battleaux.x += 5;
+        else if(select->animation < 6)  battleaux.x += 10;
+        else if(select->animation < 9)  battleaux.x += 5;
+        else if(select->animation < 12) battleaux.x += 0;
+        else if(select->animation < 15) battleaux.x -= 5;
+        else if(select->animation < 18) battleaux.x -= 10;
+        else if(select->animation < 21) battleaux.x -= 5;
+        else                            battleaux.x -= 0;
+        SDL_RenderSetViewport(gRenderer, &battleaux);
+    }
+    else
     SDL_RenderSetViewport(gRenderer, &battleBGVP);
     SDL_RenderCopy(gRenderer, gBGTexture, NULL, NULL);
 
@@ -506,16 +697,27 @@ void renderBattle(Player *player, SDL_Event *e, Deck **deck, Mao **mao, SDL_Rect
         for(i = 0; i <= numeroInimigos; i++){
             if(!inimigos[i].derrotado){
                 if(numeroInimigos == 2 && i == 1){
-                    if(mouseOver(&enemyVP[i], e))
+                    if(mouseOver(&enemyVP[i], e) && !select->ativoe)
                         enemyVP[i].y = 3*(3 * SCR_HEI / 4 - 30)/4 - enemyVP[i].h - 15;
                     else
                         enemyVP[i].y = 3*(3 * SCR_HEI / 4 - 30)/4 - enemyVP[i].h;
                 }
                 else{
-                    if(mouseOver(&enemyVP[i], e))
+                    if(mouseOver(&enemyVP[i], e) && !select->ativoe)
                         enemyVP[i].y = 3*(3 * SCR_HEI / 4 - 30)/4 - enemyVP[i].h + 40;
                     else
                         enemyVP[i].y = 3*(3 * SCR_HEI / 4 - 30)/4 - enemyVP[i].h + 50;
+                }
+                if(select->ativoe && i == select->indexe){
+                    enemyVP[i].x = (((1040 / (numeroInimigos + 2)) * (i + 1)) - (enemyVP[i].w / 2));
+                    if(select->animation < 3)       enemyVP[i].x -= 5;
+                    else if(select->animation < 6)  enemyVP[i].x -= 10;
+                    else if(select->animation < 9)  enemyVP[i].x -= 5;
+                    else if(select->animation < 12) enemyVP[i].x -= 0;
+                    else if(select->animation < 15) enemyVP[i].x += 5;
+                    else if(select->animation < 18) enemyVP[i].x += 10;
+                    else if(select->animation < 21) enemyVP[i].x += 5;
+                    else                            enemyVP[i].x += 0;
                 }
                 SDL_SetTextureAlphaMod(gEnemyTexture[inimigos[i].id], inimigos[i].alpha);
                 SDL_RenderCopy(gRenderer, gEnemyTexture[inimigos[i].id], NULL, &enemyVP[i]);
@@ -553,12 +755,41 @@ void renderBattle(Player *player, SDL_Event *e, Deck **deck, Mao **mao, SDL_Rect
         }
 
     // Menu
-    SDL_RenderSetViewport(gRenderer, &menuVP);
     SDL_SetTextureAlphaMod(gMenuBoxTexture, 255);
+    if(select->playerDMG){
+        SDL_Rect dmg;
+        dmg = menuVP;
+        if(select->animation < 3)       dmg.x -= 5;
+        else if(select->animation < 6)  dmg.x -= 10;
+        else if(select->animation < 9)  dmg.x -= 5;
+        else if(select->animation < 12) dmg.x -= 0;
+        else if(select->animation < 15) dmg.x += 5;
+        else if(select->animation < 18) dmg.x += 10;
+        else if(select->animation < 21) dmg.x += 5;
+        else                            dmg.x += 0;
+        SDL_RenderSetViewport(gRenderer, &dmg);
+    }
+    else
+        SDL_RenderSetViewport(gRenderer, &menuVP);
     SDL_RenderCopy(gRenderer, gMenuBoxTexture, NULL, NULL);
 
         // Stats
-        SDL_RenderSetViewport(gRenderer, &statsVP);
+        if(select->playerDMG){
+            SDL_Rect statsaux;
+            statsaux = statsVP;
+            if(select->animation < 3)       statsaux.x -= 5;
+            else if(select->animation < 6)  statsaux.x -= 10;
+            else if(select->animation < 9)  statsaux.x -= 5;
+            else if(select->animation < 12) statsaux.x -= 0;
+            else if(select->animation < 15) statsaux.x += 5;
+            else if(select->animation < 18) statsaux.x += 10;
+            else if(select->animation < 21) statsaux.x += 5;
+            else                            statsaux.x += 0;
+            SDL_RenderSetViewport(gRenderer, &statsaux);
+        }
+        else{
+            SDL_RenderSetViewport(gRenderer, &statsVP);
+        }
                   
             // barra CR
             SDL_Rect aux = {80, 55, 10, 28};
@@ -603,10 +834,10 @@ void renderBattle(Player *player, SDL_Event *e, Deck **deck, Mao **mao, SDL_Rect
 
             // HP MAX
             aux.x = 102; aux.y = 21; aux.w = 47*0.75; aux.h = 30;
-            renderTexto("250", black);
+            renderTexto("450", black);
             SDL_RenderCopy(gRenderer, gFontTexture, NULL, &aux);
             aux.x -= 4; aux.y -= 4;
-            renderTexto("250", color);
+            renderTexto("450", color);
             SDL_RenderCopy(gRenderer, gFontTexture, NULL, &aux);
 
             // HP Atual
@@ -639,7 +870,21 @@ void renderBattle(Player *player, SDL_Event *e, Deck **deck, Mao **mao, SDL_Rect
             }
 
     // Cartas
-    SDL_RenderSetViewport(gRenderer, &stockVP);
+    if(select->playerDMG){
+        SDL_Rect stockaux;
+        stockaux = stockVP;
+        if(select->animation < 3)       stockaux.x -= 5;
+        else if(select->animation < 6)  stockaux.x -= 10;
+        else if(select->animation < 9)  stockaux.x -= 5;
+        else if(select->animation < 12) stockaux.x -= 0;
+        else if(select->animation < 15) stockaux.x += 5;
+        else if(select->animation < 18) stockaux.x += 10;
+        else if(select->animation < 21) stockaux.x += 5;
+        else                            stockaux.x += 0;
+        SDL_RenderSetViewport(gRenderer, &stockaux);
+    }
+    else
+        SDL_RenderSetViewport(gRenderer, &stockVP);
     for (i = 0; i < qtd_mao(*mao); i++){
         if(mouseOver(&(cardAreaVP[i]), e) && !select->ativoc)
             cardAreaVP[i].y = 0;
@@ -757,14 +1002,14 @@ int calculoDano(Player *player, int idcarta, InimigoBatalha *inimigos, Seletor *
 
 int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
     int idcarta, battle = 1, numeroInimigos, inimigosTurno;
-    int width, k, i, critical = 0,  roll;
+    int width, k, i, critical = 0,  roll, qtd;
     int escudoCount = 0, prevCount = 0, pause = 1;
     double fatorAleatorio, dano = 0;
     char msg[100];
     Deck *deck = NULL;
     Mao *mao = NULL;
     InimigoBatalha *inimigos = NULL;
-    Seletor select = {1, 1, -1, -1, 0, 0, 0, 0, 1};
+    Seletor select = {1, 1, -1, -1, 0, 0, 0, 0, 1, 0, 0};
     SDL_Rect numeroSize;
     Animation animate = {0, 0, 0, 0, {0,0,0,0}, {0,0,0,0}};
 
@@ -823,6 +1068,12 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
         cardAreaVP[i].h = SCR_HEI/4 - 35;
     }
 
+    if(boss > 0)
+        Mix_FadeInMusic(gBGM[BOSS_THEME], -1, 1000);
+    else
+        Mix_FadeInMusic(gBGM[BATTLE], -1, 1000);
+
+    select.primeiroTurno = 1;
     while(battle){
         while(SDL_PollEvent(e) != 0){
             if(e->type == SDL_QUIT){
@@ -840,8 +1091,14 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
         
         if(select.primeiroTurno){
             // Animacao monstros surgindo
-            renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
-            SDL_RenderPresent(gRenderer);
+            animate.alpha = 255;
+            while(animate.alpha > 0){
+                renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
+                SDL_RenderSetViewport(gRenderer, NULL);
+                fadeInOut(0x00, 0x00, 0x00, animate.alpha);
+                SDL_RenderPresent(gRenderer);
+                animate.alpha -= 3;
+            }
             while(inimigos[0].alpha < 255){
                 for(i = 0; i <= numeroInimigos;i++)
                     inimigos[i].alpha += 5;
@@ -903,9 +1160,8 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
         strcpy(msg, "Sua vez!");
         renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
         renderBattleMessage(msg, &msgAreaTopVP, 1);
-
-        /* IMPRIMIR \/ */
-
+        SDL_RenderSetViewport(gRenderer, &msgAreaTopVP);
+        SDL_RenderCopy(gRenderer, gArrow, NULL, &arrowVP);
         SDL_RenderPresent(gRenderer);
         SDL_FlushEvent(SDL_MOUSEBUTTONDOWN);
         select.ativoc = 0;
@@ -914,7 +1170,7 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
             SDL_WaitEvent(e);
             if(e->type == SDL_MOUSEBUTTONDOWN)
                 break;
-            else if(e->type == SDL_KEYDOWN && e->key.keysym.sym == SDLK_ESCAPE){
+            else if((e->type == SDL_KEYDOWN && e->key.keysym.sym == SDLK_ESCAPE) || e->type == SDL_QUIT){
                 *quit = 1;
                 return 0;
             }
@@ -929,6 +1185,7 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                     battle = 0;
                     *quit = 1;
                     player->turno = 0;
+                    return 0;
                 }
                 else if(e->type == SDL_KEYDOWN){
                         switch(e->key.keysym.sym){
@@ -963,6 +1220,9 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                     numeroSize.y = enemyVP[k].y + enemyVP[k].h / 2 - 33;
                                     numeroSize.w = 94; numeroSize.h = 66;
                                     animate.alpha = 255;
+                                    playSFX(CAST);
+                                    SDL_Delay(2000);
+                                    playSFX(carta_db[idcarta].carta_info.sfx);
                                     while(animate.alpha > 0){
                                         renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
                                         SDL_RenderSetViewport(gRenderer, NULL);
@@ -1002,8 +1262,10 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                         SDL_RenderPresent(gRenderer);
                                         numeroSize.y -= 3;
                                         animate.alpha -= 5;
+                                        select.animation = (select.animation + 1) % 25;
                                     }
                                     critical = 0;
+                                    select.animation = 0;
 
                                     // Deducao HP
                                     inimigos[k].hp -= dano;
@@ -1031,6 +1293,7 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                     }
                                     // Detector deadbody
                                     if(inimigos[k].hp <= 0){
+                                        playSFX(inimigo_db[inimigos[k].id].scream);
                                         inimigos[k].alpha = 255;
                                         while(inimigos[k].alpha > 0){
                                             inimigos[k].alpha -= 5;
@@ -1044,7 +1307,6 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                     descarta_carta(mao, select.indexc);
                                     select.indexc = -1;
                                     player->turno = 0;
-                                    // SDL_EventState(SDL_MOUSEBUTTONDOWN, SDL_IGNORE);
                                     break;
                                 }
                             }
@@ -1068,6 +1330,28 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
 
                                     select.ativoc = 1;
                                     player->hp += dano;
+                                    if(player->hp <= player->hpmax / 4){
+                                        if(!select.crisis){
+                                            Mix_PlayChannel(0, gSFX[HP_LOW], -1);
+                                            Mix_HaltMusic();
+                                            if(boss > 0)
+                                                Mix_PlayMusic(gBGM[BOSS_CRISIS], -1);
+                                            else
+                                                Mix_PlayMusic(gBGM[BATTLE_CRISIS], -1);
+                                        }
+                                        select.crisis = 1;
+                                    }
+                                    else{
+                                        if(select.crisis){
+                                            Mix_HaltChannel(0);
+                                            Mix_HaltMusic();
+                                            if(boss > 0)
+                                                Mix_PlayMusic(gBGM[BOSS_THEME], -1);
+                                            else
+                                                Mix_PlayMusic(gBGM[BATTLE], -1);
+                                        }
+                                        select.crisis = 0;
+                                    }
                                     if(player->hp > player->hpmax)
                                         player->hp = player->hpmax;
                                     renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
@@ -1077,6 +1361,7 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                     antiMingwItoa(msg, dano);
                                     numeroSize.x = 31; numeroSize.y = 600; numeroSize.w = 94; numeroSize.h = 66;
                                     animate.alpha = 255;
+                                    playSFX(carta_db[idcarta].carta_info.sfx);
                                     while(animate.alpha > 0){
                                         renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
                                         SDL_RenderSetViewport(gRenderer, NULL);
@@ -1103,7 +1388,7 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                     select.ativoc = 1;
                                     renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
                                     SDL_RenderPresent(gRenderer);
-
+                                    playSFX(carta_db[idcarta].carta_info.sfx);
                                     /* ANIMACAO */
 
                                     select.ativoc = 0;
@@ -1116,7 +1401,7 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                     select.ativoc = 1;
                                     renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
                                     SDL_RenderPresent(gRenderer);
-
+                                    playSFX(carta_db[idcarta].carta_info.sfx);
                                     /* ANIMACAO */
 
                                     select.ativoc = 0;
@@ -1134,6 +1419,7 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                     SDL_RenderPresent(gRenderer);
                                     SDL_Delay(50);
 
+                                    playSFX(carta_db[idcarta].carta_info.sfx);
                                     compra_carta(deck, mao);
                                     renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
                                     SDL_RenderPresent(gRenderer);
@@ -1144,7 +1430,6 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                         SDL_RenderPresent(gRenderer);
                                         SDL_Delay(50);
                                     }
-                                    player->turno = 0;
                                 }
                                 SDL_Delay(100);
                             }
@@ -1171,6 +1456,11 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                 numeroSize.y = enemyVP[i].y + enemyVP[i].h / 2 - 33;
                                 numeroSize.w = 94; numeroSize.h = 66;
                                 animate.alpha = 255;
+                                if(critical)
+                                    playSFX(HIT_CRIT);
+                                else
+                                    playSFX(HIT);
+                                
                                 while(animate.alpha > 0){
                                     renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
                                     SDL_RenderSetViewport(gRenderer, NULL);
@@ -1210,8 +1500,10 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                     SDL_RenderPresent(gRenderer);
                                     numeroSize.y -= 3;
                                     animate.alpha -= 5;
+                                    select.animation = (select.animation + 1) % 25;
                                 }
                                 critical = 0;
+                                select.animation = 0;
 
                                 // Deducao HP
                                 inimigos[i].hp -= dano;
@@ -1240,6 +1532,7 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                 // Detector deadbody
                                 if(inimigos[i].hp <= 0){
                                     inimigos[i].alpha = 255;
+                                    playSFX(inimigo_db[inimigos[i].id].scream);
                                     while(inimigos[i].alpha > 0){
                                         inimigos[i].alpha -= 5;
                                         renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
@@ -1273,7 +1566,7 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                 inimigos[i].turno = 1;
                 while(inimigos[i].turno && !inimigos[i].derrotado){
                     while(SDL_PollEvent(e) != 0){
-                        if(e->type == SDL_QUIT){
+                        if(e->type == SDL_QUIT || (e->type == SDL_KEYDOWN && e->key.keysym.sym == SDLK_ESCAPE)){
                             *quit = 1;
                             return 0;
                         }
@@ -1285,7 +1578,7 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                     renderBattleMessage(msg, &msgAreaTopVP, 1);
                     SDL_RenderPresent(gRenderer);
                     SDL_Delay(1250);
-                    if(inimigos[i].fleeCount >= 5 && inimigos[i].id == 0){
+                    if(inimigos[i].fleeCount >= 3 && inimigos[i].id == 0){
                         k = 20;
                         inimigos[i].fleeCount = 100;
                     }
@@ -1315,12 +1608,20 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                 strcat(msg, " tentou atacar, mas Escudo Mágico te protegeu!");
                                 renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
                                 renderBattleMessage(msg, &msgAreaTopVP, 1);
+                                SDL_RenderSetViewport(gRenderer, &msgAreaTopVP);
+                                SDL_RenderCopy(gRenderer, gArrow, NULL, &arrowVP);
+                                playSFX(HIT_PROTEC);
                                 SDL_RenderPresent(gRenderer);
                                 SDL_Delay(1250);
+                                SDL_FlushEvent(SDL_MOUSEBUTTONDOWN);
                                 while(pause){
                                     SDL_WaitEvent(e);
                                     if(e->type == SDL_MOUSEBUTTONDOWN)
                                         break;
+                                    else if(e->type == SDL_QUIT || (e->type == SDL_KEYDOWN && e->key.keysym.sym == SDLK_ESCAPE)){
+                                        *quit = 1;
+                                        return 0;
+                                    }
                                 }
                                 inimigos[i].turno = 0;
                                 // renderMessageWrapped(msg, &msgAreaTopVP);
@@ -1331,6 +1632,11 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                             numeroSize.x = 31; numeroSize.y = 600; numeroSize.w = 94; numeroSize.h = 66;
                             numeroSize.w = 94; numeroSize.h = 66;
                             animate.alpha = 255;
+                            if(critical)
+                                playSFX(MONSTER_CRIT);
+                            else
+                                playSFX(MONSTER_HIT);
+                            select.playerDMG = 1;
                             while(animate.alpha > 0){
                                 renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
                                 SDL_RenderSetViewport(gRenderer, NULL);
@@ -1361,9 +1667,35 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                 SDL_RenderPresent(gRenderer);
                                 numeroSize.y -= 3;
                                 animate.alpha -= 5;
+                                select.animation = (select.animation + 1) % 25;
                             }
+                            select.playerDMG = 0;
+                            select.animation = 0;
                             critical = 0;
                             player->hp -= dano;
+                            if(player->hp <= player->hpmax / 4){
+                                if(!select.crisis){
+                                    Mix_PlayChannel(0, gSFX[HP_LOW], -1);
+                                    Mix_HaltMusic();
+                                    if(boss > 0)
+                                        Mix_PlayMusic(gBGM[BOSS_CRISIS], -1);
+                                    else
+                                        Mix_PlayMusic(gBGM[BATTLE_CRISIS], -1);
+                                }
+                                select.crisis = 1;
+                            }
+                            else{
+                                if(select.crisis){
+                                    Mix_HaltChannel(0);
+                                    Mix_HaltMusic();
+                                    if(boss > 0)
+                                        Mix_PlayMusic(gBGM[BOSS_THEME], -1);
+                                    else
+                                        Mix_PlayMusic(gBGM[BATTLE], -1);
+                                }
+                                select.crisis = 0;
+                            }
+                            
                             if(player->hp < 0)
                                 player->hp = 0;
                             if(player->hp == 0){
@@ -1379,6 +1711,8 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                     animate.alpha += 1;
                                 }
                                 SDL_Delay(1000);
+                                free(inimigos);
+                                battleEnd(&deck, &mao);
                                 return 0;
                             }
                         inimigos[i].turno = 0;
@@ -1396,35 +1730,52 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                 strcpy(msg, "Punho Firme te protegeu!");
                                 renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
                                 renderBattleMessage(msg, &msgAreaTopVP, 1);
+                                SDL_RenderSetViewport(gRenderer, &msgAreaTopVP);
+                                SDL_RenderCopy(gRenderer, gArrow, NULL, &arrowVP);
                                 SDL_RenderPresent(gRenderer);
                                 SDL_Delay(1250);
+                                playSFX(HIT_PROTEC);
                                 while(pause){
                                     SDL_WaitEvent(e);
                                     if(e->type == SDL_MOUSEBUTTONDOWN)
                                         break;
+                                    else if(e->type == SDL_QUIT ||(e->type == SDL_KEYDOWN && e->key.keysym.sym == SDLK_ESCAPE)){
+                                        *quit = 1;
+                                        return 0;
+                                    }
                                 }
                                 inimigos[i].turno = 0;
                                 break;
                             }
-
-                            k = inimigo_db[inimigos[i].id].comportamento.discard_num;
-                            strcpy(msg, inimigo_db[inimigos[i].id].nome);
-                            strcat(msg, " te roubou!");
-                            renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
-                            renderBattleMessage(msg, &msgAreaTopVP, 1);
-                            SDL_RenderPresent(gRenderer);
-                            SDL_Delay(1250);
-                            while(k > 0 && !mao_vazia(mao)){
-                                roll = rand() % mao->qtd_cartas;
-                                consulta_mao(mao, roll, &idcarta);
-                                descarta_carta(mao, roll);
-                                strcpy(msg, carta_db[idcarta].carta_info.nome_carta);
-                                strcat(msg, " foi perdida!");
+                            if(((rand() % 100) + 1) <= inimigo_db[inimigos[i].id].comportamento.steal_chance){
+                                k = inimigo_db[inimigos[i].id].comportamento.discard_num;
+                                strcpy(msg, inimigo_db[inimigos[i].id].nome);
+                                strcat(msg, " te roubou!");
                                 renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
                                 renderBattleMessage(msg, &msgAreaTopVP, 1);
                                 SDL_RenderPresent(gRenderer);
                                 SDL_Delay(1250);
-                                k--;
+                                while(k > 0 && !mao_vazia(mao)){
+                                    roll = rand() % mao->qtd_cartas;
+                                    consulta_mao(mao, roll, &idcarta);
+                                    descarta_carta(mao, roll);
+                                    strcpy(msg, carta_db[idcarta].carta_info.nome_carta);
+                                    strcat(msg, " foi perdida!");
+                                    renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
+                                    renderBattleMessage(msg, &msgAreaTopVP, 1);
+                                    SDL_RenderPresent(gRenderer);
+                                    playSFX(MONSTER_STEAL);
+                                    SDL_Delay(1250);
+                                    k--;
+                                }
+                            }
+                            else{
+                                strcpy(msg, inimigo_db[inimigos[i].id].nome);
+                                strcat(msg, " fracassou!");
+                                renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
+                                renderBattleMessage(msg, &msgAreaTopVP, 1);
+                                SDL_RenderPresent(gRenderer);
+                                SDL_Delay(1250);
                             }
                         inimigos[i].turno = 0;
                         break;
@@ -1435,6 +1786,7 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                 strcpy(msg, inimigo_db[inimigos[i].id].nome);
                                 strcat(msg, " fugiu!");
                                 inimigos[i].alpha = 255;
+                                playSFX(MONSTER_FLEE);
                                 while(inimigos[i].alpha > 0){
                                     inimigos[i].alpha -= 5;
                                     renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
@@ -1474,6 +1826,7 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                 renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
                                 renderBattleMessage(msg, &msgAreaTopVP, 1);
                                 SDL_RenderPresent(gRenderer);
+                                playSFX(HIT_PROTEC);
                                 SDL_Delay(1250);
                                 // renderMessageWrapped(msg, &msgAreaTopVP);
                                 inimigos[i].turno = 0;
@@ -1498,6 +1851,11 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                             numeroSize.x = 31; numeroSize.y = 600; numeroSize.w = 94; numeroSize.h = 66;
                             numeroSize.w = 94; numeroSize.h = 66;
                             animate.alpha = 255;
+                            if(select.absorb)
+                                playSFX(HEAL);
+                            else
+                                playSFX(MONSTER_CRIT);
+                            select.playerDMG = 1;
                             while(animate.alpha > 0){
                                 renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
                                 SDL_RenderSetViewport(gRenderer, NULL);
@@ -1533,12 +1891,37 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                 SDL_RenderPresent(gRenderer);
                                 numeroSize.y -= 3;
                                 animate.alpha -= 5;
+                                select.animation = (select.animation + 1) % 25;
                             }
+                            select.playerDMG = 0;
+                            select.animation = 0;
                             critical = 0;
                             if(select.absorb)
                                 dano *= -1;
                             select.absorb = 0;
                             player->hp -= dano;
+                            if(player->hp <= player->hpmax / 4){
+                                if(!select.crisis){
+                                    Mix_PlayChannel(0, gSFX[HP_LOW], -1);
+                                    Mix_HaltMusic();
+                                    if(boss > 0)
+                                        Mix_PlayMusic(gBGM[BOSS_CRISIS], -1);
+                                    else
+                                        Mix_PlayMusic(gBGM[BATTLE_CRISIS], -1);
+                                }
+                                select.crisis = 1;
+                            }
+                            else{
+                                if(select.crisis){
+                                    Mix_HaltChannel(0);
+                                    Mix_HaltMusic();
+                                    if(boss > 0)
+                                        Mix_PlayMusic(gBGM[BOSS_THEME], -1);
+                                    else
+                                        Mix_PlayMusic(gBGM[BATTLE], -1);
+                                }
+                                select.crisis = 0;
+                            }
                             if(player->hp < 0)
                                 player->hp = 0;
                             if(player->hp > player->hpmax)
@@ -1557,6 +1940,8 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                                     animate.alpha += 1;
                                 }
                                 SDL_Delay(1000);
+                                free(inimigos);
+                                battleEnd(&deck, &mao);
                                 return 0;
                             }
                         inimigos[i].turno = 0;
@@ -1573,6 +1958,59 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
                             inimigos[i].buffCount = inimigo_db[inimigos[i].id].buffdefault + 1;
                         inimigos[i].turno = 0;
                         break;
+
+                        case SHUFFLE:
+                            strcpy(msg, "Mas o quê?!");
+                            renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
+                            renderBattleMessage(msg, &msgAreaTopVP, 1);
+                            SDL_RenderPresent(gRenderer);
+                            SDL_Delay(1250);
+                            strcpy(msg, inimigo_db[inimigos[i].id].nome);
+                            strcat(msg, " está te forçando a embaralhar!");
+                            renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
+                            renderBattleMessage(msg, &msgAreaTopVP, 1);
+                            SDL_RenderPresent(gRenderer);
+                            SDL_Delay(1250);
+
+                            if(select.prev){
+                                strcpy(msg, "Punho Firme te protegeu!");
+                                renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
+                                renderBattleMessage(msg, &msgAreaTopVP, 1);
+                                SDL_RenderSetViewport(gRenderer, &msgAreaTopVP);
+                                SDL_RenderCopy(gRenderer, gArrow, NULL, &arrowVP);
+                                SDL_RenderPresent(gRenderer);
+                                SDL_Delay(1250);
+                                playSFX(HIT_PROTEC);
+                                while(pause){
+                                    SDL_WaitEvent(e);
+                                    if(e->type == SDL_MOUSEBUTTONDOWN)
+                                        break;
+                                    else if(e->type == SDL_QUIT ||(e->type == SDL_KEYDOWN && e->key.keysym.sym == SDLK_ESCAPE)){
+                                        *quit = 1;
+                                        return 0;
+                                    }
+                                }
+                                inimigos[i].turno = 0;
+                                break;
+                            }
+
+                            qtd = mao->qtd_cartas;
+                            while(!mao_vazia(mao)){
+                                mao_para_deck(deck, mao, 0);
+                                renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
+                                SDL_RenderPresent(gRenderer);
+                                SDL_Delay(100);
+                            }
+                            embaralha_deck(deck);
+                            while(qtd > 0){
+                                compra_carta(deck, mao);
+                                renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
+                                SDL_RenderPresent(gRenderer);
+                                SDL_Delay(100);
+                                qtd--;
+                            }
+                            inimigos[i].turno = 0;
+                        break;
                     }
                     if(!battle)
                         break;
@@ -1586,33 +2024,46 @@ int battleOn(Player *player, SDL_Event *e, int *quit, int boss){
         }
 
         // Fim Turno
-        if(!battle)
-            break;
 
         battle = 0;
         for(i = 0; i <= numeroInimigos; i++){
             if(!inimigos[i].derrotado){
                 battle = 1;
-                break;
             }
+        }
+
+        if(!battle){
+            strcpy(msg, "Não há mais inimigos!");
+            renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
+            renderBattleMessage(msg, &msgAreaTopVP, 1);
+            SDL_RenderPresent(gRenderer);
+            if(Mix_Playing(0))
+                Mix_HaltChannel(0);
+            controlBGM(0, STOP);
+            controlBGM(BATTLE_WON, PLAY);
+            SDL_Delay(1250);
         }
         
         if(select.escudo)
             escudoCount++;
         if(escudoCount >= 2){
             select.escudo = 0;
+            escudoCount = 0;
             strcpy(msg, "Escudo Mágico se dissipou!");
             renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
             renderBattleMessage(msg, &msgAreaTopVP, 1);
+            SDL_RenderPresent(gRenderer);
             SDL_Delay(1250);
         }
         if(select.prev)
             prevCount++;
         if(prevCount >= 4){
             select.prev = 0;
+            prevCount = 0;
             strcpy(msg, "Punho Firme se dissipou!");
             renderBattle(player, e, &deck, &mao, enemyVP, cardAreaVP, inimigos, numeroInimigos, &select);
             renderBattleMessage(msg, &msgAreaTopVP, 1);
+            SDL_RenderPresent(gRenderer);
             SDL_Delay(1250);
         }
 
@@ -1639,9 +2090,10 @@ int main(int argc, char* args[]) // SDL requer que main tenha estes argumentos
         if(!loadMediaBasic())
             printf("load failed.\n");
         else{
+            Mix_Volume(-1, 400);
             int quit = 0, battle = 0;
             SDL_Event e;
-            Player player = {250, 250, 100, 30, 0, 0, 1, 0};
+            Player player = {450, 450, 100, 30, 0, 0, 1, 0};
             SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
             int randomEnemy = 1;
 
@@ -1651,21 +2103,30 @@ int main(int argc, char* args[]) // SDL requer que main tenha estes argumentos
                     if(e.type == SDL_QUIT)
                         quit = 1;
                 }
-                player.gameOver = 0;
-                /* MAIN MENU */
+                
+                // MAIN MENU
                 if(player.mainMenu)
                     mainMenu(&player, &e, &quit);
+                if(quit)
+                    continue;
+                SDL_Delay(2000);
+                player.hp = player.hpmax;
 
                 /* HISTORIA */
 
+                // BATALHA
                 battle = rand() % 2;
                 if(battle){
                     randomEnemy = rand() % 2;
                     battle = battleOn(&player, &e, &quit, randomEnemy);
                 }
+                if(Mix_Playing(0))
+                    Mix_HaltChannel(0);
 
+                // GAME OVER
                 if(player.gameOver)
                     gameOver(&e);
+                player.gameOver = 0;
             }
             libera_db_carta();
             closeWindow();

@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "deck.h"
+#include "main.h"
 
 // TODO:
 // Struct Carta                                         OK
@@ -35,10 +32,11 @@ void cria_db_carta(){
     strcpy(carta_db[0].carta_info.descricao, "Cura - Nível 1:\nRegenera seu HP muito pouco. Agora voce entende quando dizem \"melhor prevenir do que remediar\", não é?");
     carta_db[0].qtdefault = 4;
     carta_db[0].qtleft = 4;
-    strcpy(carta_db[0].carta_info.path, "Sprites/Cartas/00.png");
+    strcpy(carta_db[0].carta_info.path, "./Sprites/Cartas/00.png");
     carta_db[0].carta_info.range = 35;
     carta_db[0].carta_info.rangemin = 11;
-
+    carta_db[0].carta_info.sfx = HEAL;
+    
     carta_db[1].carta_info.ID_carta = 1;
     strcpy(carta_db[1].carta_info.nome_carta, "Benção Divina");
     strcpy(carta_db[1].carta_info.elemento_carta, "Cura");
@@ -47,9 +45,10 @@ void cria_db_carta(){
     strcpy(carta_db[1].carta_info.descricao, "Cura - Nível 2:\nRegenera seu HP. Mas não tem nada de divino aqui. Devo lembró-lo de que você é um mago e não um clérigo?");
     carta_db[1].qtdefault = 2;
     carta_db[1].qtleft = 2;
-    strcpy(carta_db[1].carta_info.path, "Sprites/Cartas/01.png");
+    strcpy(carta_db[1].carta_info.path, "./Sprites/Cartas/01.png");
     carta_db[1].carta_info.range = 27;
     carta_db[1].carta_info.rangemin = 30;
+    carta_db[1].carta_info.sfx = HEAL;
 
     carta_db[2].carta_info.ID_carta = 2;
     strcpy(carta_db[2].carta_info.nome_carta, "Relaxa, Tô Full Life");
@@ -59,9 +58,10 @@ void cria_db_carta(){
     strcpy(carta_db[2].carta_info.descricao, "Cura - Nível 3:\nCura completamente. Só pode ser usada uma vez por batalha! Nada melhor do que um dia após o outro, não é mesmo?");
     carta_db[2].qtdefault = 1;
     carta_db[2].qtleft = 1;
-    strcpy(carta_db[2].carta_info.path, "Sprites/Cartas/02.png");
+    strcpy(carta_db[2].carta_info.path, "./Sprites/Cartas/02.png");
     carta_db[2].carta_info.range = 0;
     carta_db[2].carta_info.rangemin = 1;
+    carta_db[2].carta_info.sfx = HEAL_FULL;
 
     // Cartas de Fogo
 
@@ -73,9 +73,10 @@ void cria_db_carta(){
     strcpy(carta_db[3].carta_info.descricao, "Fogo - Nível 1:\nSério que voce precisa de uma explicação pra uma magia com esse nome? Conjura uma labareda. Uau.");
     carta_db[3].qtdefault = 3;
     carta_db[3].qtleft = 3;
-    strcpy(carta_db[3].carta_info.path, "Sprites/Cartas/03.png");
+    strcpy(carta_db[3].carta_info.path, "./Sprites/Cartas/03.png");
     carta_db[3].carta_info.range = 40;
     carta_db[3].carta_info.rangemin = 80;
+    carta_db[3].carta_info.sfx = FIRE1;
 
     carta_db[4].carta_info.ID_carta = 4;
     strcpy(carta_db[4].carta_info.nome_carta, "Fogo Amigo");
@@ -85,9 +86,10 @@ void cria_db_carta(){
     strcpy(carta_db[4].carta_info.descricao, "Fogo - Nível 2:\nConjura um redemoinho de fogo que prende o alvo. Isso que é um abraço caloroso!");
     carta_db[4].qtdefault = 2;
     carta_db[4].qtleft = 2;
-    strcpy(carta_db[4].carta_info.path, "Sprites/Cartas/04.png");
+    strcpy(carta_db[4].carta_info.path, "./Sprites/Cartas/04.png");
     carta_db[4].carta_info.range = 40;
     carta_db[4].carta_info.rangemin = 80;
+    carta_db[4].carta_info.sfx = FIRE2;
 
     carta_db[5].carta_info.ID_carta = 5;
     strcpy(carta_db[5].carta_info.nome_carta, "Presente dos Céus");
@@ -97,9 +99,10 @@ void cria_db_carta(){
     strcpy(carta_db[5].carta_info.descricao, "Fogo - Nível 3:\nConjura um meteoro acima da cabeça do alvo. Indicado para amaciar cabeças-duras!");
     carta_db[5].qtdefault = 1;
     carta_db[5].qtleft = 1;
-    strcpy(carta_db[5].carta_info.path, "Sprites/Cartas/05.png");
+    strcpy(carta_db[5].carta_info.path, "./Sprites/Cartas/05.png");
     carta_db[5].carta_info.range = 40;
     carta_db[5].carta_info.rangemin = 80;
+    carta_db[5].carta_info.sfx = FIRE3;
 
     // Cartas de Gelo
 
@@ -111,9 +114,10 @@ void cria_db_carta(){
     strcpy(carta_db[6].carta_info.descricao, "Gelo - Nível 1:\nConjura um campo mágico de baixa temperatura em volta do alvo, capaz de congelar toda a umidade do ar dentro dele. ");
     carta_db[6].qtdefault = 3;
     carta_db[6].qtleft = 3;
-    strcpy(carta_db[6].carta_info.path, "Sprites/Cartas/06.png");
+    strcpy(carta_db[6].carta_info.path, "./Sprites/Cartas/06.png");
     carta_db[6].carta_info.range = 40;
     carta_db[6].carta_info.rangemin = 80;
+    carta_db[6].carta_info.sfx = ICE1;
 
     carta_db[7].carta_info.ID_carta = 7;
     strcpy(carta_db[7].carta_info.nome_carta, "Rajada Congelante");
@@ -123,9 +127,10 @@ void cria_db_carta(){
     strcpy(carta_db[7].carta_info.descricao, "Gelo - Nível 2:\nConjura uma rajada de gelo contra o alvo. Congelamento vendido separadamente.");
     carta_db[7].qtdefault = 2;
     carta_db[7].qtleft = 2;
-    strcpy(carta_db[7].carta_info.path, "Sprites/Cartas/07.png");
+    strcpy(carta_db[7].carta_info.path, "./Sprites/Cartas/07.png");
     carta_db[7].carta_info.range = 40;
     carta_db[7].carta_info.rangemin = 80;
+    carta_db[7].carta_info.sfx = ICE2;
 
     carta_db[8].carta_info.ID_carta = 8;
     strcpy(carta_db[8].carta_info.nome_carta, "Tempestade de Neve");
@@ -135,9 +140,10 @@ void cria_db_carta(){
     strcpy(carta_db[8].carta_info.descricao, "Gelo - Nivel 3:\nConjura uma nevasca sob o alvo. Melhor vestir um casaco!");
     carta_db[8].qtdefault = 1;
     carta_db[8].qtleft = 1;
-    strcpy(carta_db[8].carta_info.path, "Sprites/Cartas/08.png");
+    strcpy(carta_db[8].carta_info.path, "./Sprites/Cartas/08.png");
     carta_db[8].carta_info.range = 40;
     carta_db[8].carta_info.rangemin = 80;
+    carta_db[8].carta_info.sfx = ICE3;
 
     // Cartas de Eletricidade
 
@@ -149,9 +155,10 @@ void cria_db_carta(){
     strcpy(carta_db[9].carta_info.descricao, "Elétrico - Nível 1:\nTão potente quanto enfiar o dedo na tomada.");
     carta_db[9].qtdefault = 3;
     carta_db[9].qtleft = 3;
-    strcpy(carta_db[9].carta_info.path, "Sprites/Cartas/09.png");
+    strcpy(carta_db[9].carta_info.path, "./Sprites/Cartas/09.png");
     carta_db[9].carta_info.range = 40;
     carta_db[9].carta_info.rangemin = 80;
+    carta_db[9].carta_info.sfx = ELEC1;
 
     carta_db[10].carta_info.ID_carta = 10;
     strcpy(carta_db[10].carta_info.nome_carta, "Desfibrilar");
@@ -161,9 +168,10 @@ void cria_db_carta(){
     strcpy(carta_db[10].carta_info.descricao, "Elétrico - Nível 2:\nConjura um relâmpago diretamente sob o alvo. Churrasco instantâneo!");
     carta_db[10].qtdefault = 2;
     carta_db[10].qtleft = 2;
-    strcpy(carta_db[10].carta_info.path, "Sprites/Cartas/10.png");
+    strcpy(carta_db[10].carta_info.path, "./Sprites/Cartas/10.png");
     carta_db[10].carta_info.range = 40;
     carta_db[10].carta_info.rangemin = 80;
+    carta_db[10].carta_info.sfx = ELEC2;
 
     carta_db[11].carta_info.ID_carta = 11;
     strcpy(carta_db[11].carta_info.nome_carta, "Fúria dos Céus");
@@ -173,9 +181,10 @@ void cria_db_carta(){
     strcpy(carta_db[11].carta_info.descricao, "Elétrico - Nível 3:\nConjura uma tempestade de relâmpagos diretamente sob o alvo. Espero que não tenha medo de trovões!");
     carta_db[11].qtdefault = 1;
     carta_db[11].qtleft = 1;
-    strcpy(carta_db[11].carta_info.path, "Sprites/Cartas/11.png");
+    strcpy(carta_db[11].carta_info.path, "./Sprites/Cartas/11.png");
     carta_db[11].carta_info.range = 40;
     carta_db[11].carta_info.rangemin = 80;
+    carta_db[11].carta_info.sfx = ELEC3;
 
     // Cartas de Suporte
 
@@ -187,9 +196,10 @@ void cria_db_carta(){
     strcpy(carta_db[12].carta_info.descricao, "Suporte:\nConjura um escudo que te protege por 2 turnos. Bem útil.");
     carta_db[12].qtdefault = 2;
     carta_db[12].qtleft = 2;
-    strcpy(carta_db[12].carta_info.path, "Sprites/Cartas/12.png");
+    strcpy(carta_db[12].carta_info.path, "./Sprites/Cartas/12.png");
     carta_db[12].carta_info.range = 0;
     carta_db[12].carta_info.rangemin = 0;
+    carta_db[12].carta_info.sfx = SUPP_ESCUDO;
 
     carta_db[13].carta_info.ID_carta = 13;
     strcpy(carta_db[13].carta_info.nome_carta, "Truque do Coelho na Manga");
@@ -199,9 +209,10 @@ void cria_db_carta(){
     strcpy(carta_db[13].carta_info.descricao, "Suporte:\nLhe permite sacar até duas cartas. O quê? Cartola? Não, eu acho que você está equivocado.");
     carta_db[13].qtdefault = 2;
     carta_db[13].qtleft = 2;
-    strcpy(carta_db[13].carta_info.path, "Sprites/Cartas/13.png");
+    strcpy(carta_db[13].carta_info.path, "./Sprites/Cartas/13.png");
     carta_db[13].carta_info.range = 0;
     carta_db[13].carta_info.rangemin = 0;
+    carta_db[13].carta_info.sfx = SUPP_TRICK;
 
     carta_db[14].carta_info.ID_carta = 14;
     strcpy(carta_db[14].carta_info.nome_carta, "Punho Firme");
@@ -211,9 +222,10 @@ void cria_db_carta(){
     strcpy(carta_db[14].carta_info.descricao, "Suporte:\nPrevine que cartas sejam descartadas por 4 turnos. Afinal de contas, como eles te obrigam a fazer isso!?");
     carta_db[14].qtdefault = 1;
     carta_db[14].qtleft = 1;
-    strcpy(carta_db[14].carta_info.path, "Sprites/Cartas/14.png");
+    strcpy(carta_db[14].carta_info.path, "./Sprites/Cartas/14.png");
     carta_db[14].carta_info.range = 0;
     carta_db[14].carta_info.rangemin = 0;
+    carta_db[14].carta_info.sfx = SUPP_PREV;
 
     // Espaço vazio [Carta nula precisa ter o maior ID pois a
     // organização das cartas da mao é feita em ordem crescente de IDs]
@@ -226,9 +238,10 @@ void cria_db_carta(){
     strcpy(carta_db[15].carta_info.descricao, "---");
     carta_db[15].qtdefault = 0;
     carta_db[15].qtleft = 0;
-    strcpy(carta_db[15].carta_info.path, "Sprites/Cartas/15.png");
+    strcpy(carta_db[15].carta_info.path, "./Sprites/Cartas/15.png");
     carta_db[15].carta_info.range = 50;
     carta_db[15].carta_info.rangemin = 75;
+    carta_db[15].carta_info.sfx = HIT;
 
 }
 
@@ -480,6 +493,20 @@ int usa_carta(Mao* mi, int index, int *idconsulta){
         return -1;
     consulta_mao(mi, index, idconsulta); // passa id da carta selecionada por referência
     descarta_carta(mi, index); // descarta a carta
+    return 1;
+}
+
+int mao_para_deck(Deck* fi, Mao* mi, int index){
+    if(fi == NULL || mi == NULL)
+        return -1;
+    if(deck_cheio(fi) || mao_vazia(mi))
+        return 0;
+    if(index >= mi->qtd_cartas)
+        return -1;
+    int idcarta = 0;
+    consulta_mao(mi, index, &idcarta);
+    insere_deck(fi, idcarta);
+    descarta_carta(mi, index);
     return 1;
 }
 
