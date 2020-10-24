@@ -69,7 +69,7 @@ int init(){
 		{
 			printf( "Warning: Linear texture filtering not enabled!" );
 		}
-        gWindow = SDL_CreateWindow("MayCointainGame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCR_WID, SCR_HEI, SDL_WINDOW_SHOWN);
+        gWindow = SDL_CreateWindow("MayContainGame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCR_WID, SCR_HEI, SDL_WINDOW_SHOWN);
         if(gWindow == NULL){
             printf("window could not be created!! SDL_ERROR: %s\n", SDL_GetError());
             success = 0;
