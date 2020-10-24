@@ -1,0 +1,41 @@
+Arte digital:
+	Tela de título:
+		Nuvens:
+			Guido Boss
+
+BGM:
+
+	Tela de título:
+		"Village Consort" Kevin MacLeod (incompetech.com)
+		Licensed under Creative Commons: By Attribution 4.0 License
+		http://creativecommons.org/licenses/by/4.0/
+
+	Batalha normal:
+		"BattleField5" - PeriTune (peritune.com)
+		Licensed under Creative Commons: By Attribution 4.0 License
+		http://creativecommons.org/licenses/by/4.0/
+
+	Batalha normal (HP baixo):
+		"Blast" - PeriTune (peritune.com)
+		Licensed under Creative Commons: By Attribution 4.0 License
+		http://creativecommons.org/licenses/by/4.0/
+
+	Batalha boss:
+		"Dramatic5" - PeriTune (peritune.com)
+		Licensed under Creative Commons: By Attribution 4.0 License
+		http://creativecommons.org/licenses/by/4.0/
+
+	Batalha boss (HP baixo):
+		"Crisis" - PeriTune (peritune.com)
+		Licensed under Creative Commons: By Attribution 4.0 License
+		http://creativecommons.org/licenses/by/4.0/
+
+	Game over:
+		"PrayOrgan2" - PeriTune (peritune.com)
+		Licensed under Creative Commons: By Attribution 4.0 License
+		http://creativecommons.org/licenses/by/4.0/
+
+	Vitória:
+		"OverWorld3" - PeriTune (peritune.com)
+		Licensed under Creative Commons: By Attribution 4.0 License
+		http://creativecommons.org/licenses/by/4.0/
