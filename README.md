@@ -22,21 +22,21 @@ Projeto final da disciplina de EDA
 ----------------------------------------
 ## Objetivos:
 
-- [ ] História (textual)
-    - [ ] Passagem de tempo (4 partes)
+- [ ] ~~História (textual)~~
+    - [ ] ~~Passagem de tempo (4 partes)~~
     - [X] Implementação de Função para Impressão
-    - [ ] Escrita dos Diálogos das Quests
+    - [ ] ~~Escrita dos Diálogos das Quests~~
         - [ ] ~~Quest 1~~
         - [ ] ~~Quest 2~~
-        - [ ] Quest 3
-    - [ ] Implementação dos Diálogos das Quests
+        - [ ] ~~Quest 3~~
+    - [ ] ~~Implementação dos Diálogos das Quests~~
         - [ ] ~~Quest 1~~
         - [ ] ~~Quest 2~~
-        - [ ] Quest 3
-    - [ ] Definição dos Pontos de Possíveis Batalhas
+        - [ ] ~~Quest 3~~
+    - [ ] ~~Definição dos Pontos de Possíveis Batalhas~~
         - [ ] ~~Quest 1~~
         - [ ] ~~Quest 2~~
-        - [ ] Quest 3
+        - [ ] ~~Quest 3~~
 - [X] Cartas (9 de Ataque | 3 de Defesa | 3 de Cura)
 - [X] Inimigos (4 tipos de inimigos)
     - [X] Stats
@@ -59,14 +59,14 @@ Projeto final da disciplina de EDA
 * Opcionais:
 
 - [ ] UI
-    - [ ] Historia
-        - [ ] Sprites
-            - [ ] Background
-            - [ ] Menu
-            - [ ] Player
-            - [ ] NPCs
-            - [X] Textboxes
-    - [ ] Batalha
+    - [ ] ~~Historia~~
+        - [ ] ~~Sprites~~
+            - [ ] ~~Background~~
+            - [ ] ~~Menu~~
+            - [ ] ~~Player~~
+            - [ ] ~~NPCs~~
+            - [X] ~~Textboxes~~
+    - [X] Batalha
         - [X] Sprites
             - [X] Cartas
             - [X] Inimigos
@@ -74,12 +74,12 @@ Projeto final da disciplina de EDA
             - [X] Background
             - [X] Textboxes
             - [X] Efeitos
-        - [ ] Animações
+        - [x] Animações
             - [X] Início da batalha
                 - [X] Fade-in background
                 - [X] Fade-in inimigos
-            - [ ] Ataque Player
-            - [ ] Cartas
-            - [ ] Ataque Inimigo
-            - [ ] Inimigo Derrotado
-            - [ ] Fim da batalha# MayContainGame
+            - [X] Ataque Player
+            - [ ] ~~Cartas~~
+            - [X] Ataque Inimigo
+            - [X] Inimigo Derrotado
+            - [X] Fim da batalha# MayContainGame
