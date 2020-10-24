@@ -16,7 +16,7 @@ Projeto final da disciplina de EDA
     Extraia os arquivos em uma pasta e, através do terminal, navegue até o diretório onde extraiu os arquivos.
     Utilize a seguinte linha de comando:
     
-        gcc deck.c Inimigo.c main.c -o main -Wall -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+        gcc Sound.c deck.c Inimigo.c main.c -o main -Wall -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
         
     Depois execute o arquivo main criado
 ----------------------------------------
