@@ -6,10 +6,10 @@
 #include <string.h>
 #include <time.h>
 #include <locale.h>
-#include "SDL\\SDL2-2.0.12\\x86_64-w64-mingw32\\include\\SDL2\\SDL.h"
-#include "SDL\\SDL2-2.0.12\\x86_64-w64-mingw32\\include\\SDL2\\SDL_image.h"
-#include "SDL\\SDL2-2.0.12\\x86_64-w64-mingw32\\include\\SDL2\\SDL_mixer.h"
-#include "SDL\\SDL2-2.0.12\\x86_64-w64-mingw32\\include\\SDL2\\SDL_ttf.h"
+#include "SDL/SDL2-2.0.12/x86_64-w64-mingw32/include/SDL2/SDL.h"
+#include "SDL/SDL2-2.0.12/x86_64-w64-mingw32/include/SDL2/SDL_image.h"
+#include "SDL/SDL2-2.0.12/x86_64-w64-mingw32/include/SDL2/SDL_mixer.h"
+#include "SDL/SDL2-2.0.12/x86_64-w64-mingw32/include/SDL2/SDL_ttf.h"
 
 /* DECK */
 

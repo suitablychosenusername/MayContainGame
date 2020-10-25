@@ -668,14 +668,18 @@ void renderBattle(Player *player, SDL_Event *e, Deck **deck, Mao **mao, SDL_Rect
     SDL_Rect cardText[5];
     SDL_Rect mousehover;
     SDL_Rect texthover;
+    SDL_Rect battleaux;
+    SDL_Rect dmg;
 
     // limpa
     renderClear();
     
     // Battle Background
+    SDL_RenderSetViewport(gRenderer, &battleBGVP);
+    battleaux = battleBGVP;
+    battleaux.w += 20;
+    battleaux.x -= 10;
     if(select->playerDMG){
-        SDL_Rect battleaux;
-        battleaux = battleBGVP;
         if(select->animation < 3)       battleaux.x += 5;
         else if(select->animation < 6)  battleaux.x += 10;
         else if(select->animation < 9)  battleaux.x += 5;
@@ -684,10 +688,9 @@ void renderBattle(Player *player, SDL_Event *e, Deck **deck, Mao **mao, SDL_Rect
         else if(select->animation < 18) battleaux.x -= 10;
         else if(select->animation < 21) battleaux.x -= 5;
         else                            battleaux.x -= 0;
-        SDL_RenderSetViewport(gRenderer, &battleaux);
+        SDL_RenderCopy(gRenderer, gBGTexture, NULL, &battleaux);
     }
     else
-    SDL_RenderSetViewport(gRenderer, &battleBGVP);
     SDL_RenderCopy(gRenderer, gBGTexture, NULL, NULL);
 
     // Enemy Area
@@ -755,10 +758,10 @@ void renderBattle(Player *player, SDL_Event *e, Deck **deck, Mao **mao, SDL_Rect
         }
 
     // Menu
+    SDL_RenderSetViewport(gRenderer, &menuVP);
     SDL_SetTextureAlphaMod(gMenuBoxTexture, 255);
+    dmg = menuVP;
     if(select->playerDMG){
-        SDL_Rect dmg;
-        dmg = menuVP;
         if(select->animation < 3)       dmg.x -= 5;
         else if(select->animation < 6)  dmg.x -= 10;
         else if(select->animation < 9)  dmg.x -= 5;
@@ -767,11 +770,10 @@ void renderBattle(Player *player, SDL_Event *e, Deck **deck, Mao **mao, SDL_Rect
         else if(select->animation < 18) dmg.x += 10;
         else if(select->animation < 21) dmg.x += 5;
         else                            dmg.x += 0;
-        SDL_RenderSetViewport(gRenderer, &dmg);
+        SDL_RenderCopy(gRenderer, gMenuBoxTexture, NULL, &dmg);
     }
     else
-        SDL_RenderSetViewport(gRenderer, &menuVP);
-    SDL_RenderCopy(gRenderer, gMenuBoxTexture, NULL, NULL);
+        SDL_RenderCopy(gRenderer, gMenuBoxTexture, NULL, NULL);
 
         // Stats
         if(select->playerDMG){
