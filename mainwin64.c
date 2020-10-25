@@ -759,9 +759,8 @@ void renderBattle(Player *player, SDL_Event *e, Deck **deck, Mao **mao, SDL_Rect
 
     // Menu
     SDL_SetTextureAlphaMod(gMenuBoxTexture, 255);
-    SDL_RenderSetViewport(gRenderer, &menuVP);
-    dmg = menuVP;
     if(select->playerDMG){
+	dmg = menuVP;
         if(select->animation < 3)       dmg.x -= 5;
         else if(select->animation < 6)  dmg.x -= 10;
         else if(select->animation < 9)  dmg.x -= 5;
@@ -770,10 +769,12 @@ void renderBattle(Player *player, SDL_Event *e, Deck **deck, Mao **mao, SDL_Rect
         else if(select->animation < 18) dmg.x += 10;
         else if(select->animation < 21) dmg.x += 5;
         else                            dmg.x += 0;
-        SDL_RenderCopy(gRenderer, gMenuBoxTexture, NULL, &dmg);
+        SDL_RenderSetViewport(gRenderer, &dmg);
     }
-    else
-        SDL_RenderCopy(gRenderer, gMenuBoxTexture, NULL, NULL);
+    else{
+    	SDL_RenderSetViewport(gRenderer, &menuVP);
+    }
+    SDL_RenderCopy(gRenderer, gMenuBoxTexture, NULL, NULL);
 
         // Stats
         if(select->playerDMG){

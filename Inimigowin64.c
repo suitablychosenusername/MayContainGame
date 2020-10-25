@@ -4,7 +4,7 @@ void cria_db_inimigo(){
     inimigo_db = (Inimigo*) malloc(sizeof(Inimigo) * 5);
 
     strcpy(inimigo_db[0].nome, "Pinguim");
-    inimigo_db[0].HP = 1000;
+    inimigo_db[0].HP = 1650;
     inimigo_db[0].ATK = 1;
     inimigo_db[0].DEF = 1;
     inimigo_db[0].buffdefault = 2;
@@ -36,8 +36,8 @@ void cria_db_inimigo(){
     inimigo_db[0].scream = DEATH_PINGUIM;
 
     strcpy(inimigo_db[1].nome, "Goblin");
-    inimigo_db[1].HP = 350;
-    inimigo_db[1].ATK = 45;
+    inimigo_db[1].HP = 500;
+    inimigo_db[1].ATK = 65;
     inimigo_db[1].DEF = 10;
     inimigo_db[1].buffdefault = 0;
     inimigo_db[1].RElemento[0] = 150; // fogo
@@ -68,9 +68,9 @@ void cria_db_inimigo(){
     inimigo_db[1].scream = DEATH_GOBLIN;
 
     strcpy(inimigo_db[2].nome, "Ladrão");
-    inimigo_db[2].HP = 500;
-    inimigo_db[2].ATK = 45;
-    inimigo_db[2].DEF = 20;
+    inimigo_db[2].HP = 700;
+    inimigo_db[2].ATK = 65;
+    inimigo_db[2].DEF = 30;
     inimigo_db[2].buffdefault = 0;
     inimigo_db[2].RElemento[0] = 175; // fogo
     inimigo_db[2].RElemento[1] = 125; // gelo
@@ -100,8 +100,8 @@ void cria_db_inimigo(){
     inimigo_db[2].scream = DEATH_LADRAO;
     
     strcpy(inimigo_db[3].nome, "Pinguim");
-    inimigo_db[3].HP = 1000;
-    inimigo_db[3].ATK = 50;
+    inimigo_db[3].HP = 1650;
+    inimigo_db[3].ATK = 70;
     inimigo_db[3].DEF = 30;
     inimigo_db[3].buffdefault = 1;
     inimigo_db[3].RElemento[0] = 100; // fogo
