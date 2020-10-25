@@ -1,4 +1,4 @@
-#include "mainwin.h"
+#include "mainwin64.h"
 
 void cria_db_carta(){
     // aloca a memória para o array:

@@ -1,4 +1,4 @@
-#include "mainwin.h"
+#include "mainwin64.h"
 
 void cria_db_inimigo(){
     inimigo_db = (Inimigo*) malloc(sizeof(Inimigo) * 5);

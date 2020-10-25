@@ -1,4 +1,4 @@
-#include "mainwin.h"
+#include "mainwin64.h"
 
 int loadSounds(){
     int success = 1;

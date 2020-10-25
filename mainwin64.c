@@ -1,6 +1,6 @@
 #define SDL_MAIN_HANDLED
 
-#include "mainwin.h"
+#include "mainwin64.h"
 
 const int SCR_WID = 1280;
 const int SCR_HEI = 750;
